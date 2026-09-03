@@ -1,0 +1,40 @@
+# ===== 敏感信息（绝不提交）=====
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+secrets/
+credentials.json
+*credential*
+*token*.txt
+*apikey*
+*api_key*
+
+# ===== WorkBuddy 会话数据（保留 .workbuddy/skills/）=====
+.workbuddy/memory/
+.workbuddy/cache/
+.workbuddy/plugins/
+.workbuddy/tmp/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ===== Node =====
+node_modules/
+
+# ===== 编辑器 / 系统 =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 临时文件 =====
+*.tmp
+*.log
+~$*

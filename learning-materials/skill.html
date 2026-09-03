@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习资料：Skill（技能）</title>
+<style>
+  :root{
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
+    --brand:#2563eb; --brand-bg:#eff6ff; --accent:#0e7490; --accent-bg:#ecfeff;
+    --warn:#b45309; --warn-bg:#fffbeb; --ok:#15803d; --ok-bg:#f0fdf4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    line-height:1.75;font-size:16px}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+  header{background:linear-gradient(135deg,#15803d,#0e7490);color:#fff;border-radius:16px;
+    padding:36px 32px;margin-bottom:28px}
+  header .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    border-radius:999px;padding:2px 14px;font-size:13px;letter-spacing:2px;margin-bottom:14px}
+  header h1{margin:0 0 10px;font-size:34px;letter-spacing:1px}
+  header p{margin:0;opacity:.92;font-size:15px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px 28px;margin-bottom:20px}
+  h2{margin:0 0 16px;font-size:21px;display:flex;align-items:center;gap:10px}
+  h2 .no{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
+    border-radius:8px;background:var(--brand-bg);color:var(--brand);font-size:15px;flex:none}
+  h3{font-size:17px;margin:20px 0 8px}
+  ul,ol{padding-left:1.4em;margin:8px 0}
+  li{margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+  th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
+  td{padding:10px 12px;border:1px solid var(--line);vertical-align:top}
+  .note{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .warnbox{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .okbox{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  details{background:#f8fafc;border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin:10px 0}
+  summary{cursor:pointer;font-weight:600;color:var(--brand)}
+  details[open]{background:#fff}
+  .src{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    margin:10px 0;background:#fafafa;font-size:14.5px}
+  .src b{display:block;margin-bottom:2px}
+  .src .meta{color:var(--muted);font-size:13px}
+  .src a{color:var(--brand);word-break:break-all}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+  svg{max-width:100%;height:auto;display:block;margin:16px auto}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow-x:auto;
+    font-size:13.5px;line-height:1.6;font-family:Consolas,"Courier New",monospace}
+  code{background:#eff6ff;color:#1d4ed8;border-radius:4px;padding:1px 6px;font-size:14px;
+    font-family:Consolas,"Courier New",monospace}
+  pre code{background:none;color:inherit;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge">概念学习资料 · 03</span>
+  <h1>Skill（技能）</h1>
+  <p>由 concept-learner Skill 生成 · 2026-09-03 · 学习深度：入门</p>
+</header>
+
+<section>
+  <h2><span class="no">1</span>学习目标</h2>
+  <ul>
+    <li>能说出 Skill 的定义：把"完成某类任务的方法"沉淀成结构化、可复用的指令包</li>
+    <li>能描述一个 Skill 的基本结构（YAML 元数据 + 正文）及各部分作用</li>
+    <li>能解释 Skill 的触发机制——Agent 靠什么判断"现在该用这个 Skill"</li>
+    <li>能区分 Skill 与 Prompt、Agent、工具（MCP）这几个近义概念</li>
+    <li>能说明 Skill 如何沉淀可复用的任务知识，以及它的适用边界</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="no">2</span>核心问题</h2>
+  <ol>
+    <li>同一个任务，为什么每次都要重新把要求说一遍？能不能"教一次，以后都会"？</li>
+    <li>Skill 和"保存一段提示词"有什么本质区别？</li>
+    <li>Skill 是怎么被 AI"学会"的——是训练进模型里，还是别的方式？</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="no">3</span>我的解释</h2>
+  <p>我的理解：Skill 就是写给 AI 看的<strong>标准作业程序（SOP）手册</strong>。你把"这类任务该怎么做"——适用场景、需要什么输入、分几步、每步的规范、最后自检——写成一份结构化文件，放进约定目录。之后只要你提到相关任务，AI 会自动把这本手册<strong>翻开（加载进上下文）</strong>，照着步骤执行。</p>
+  <p>它最妙的地方在于"教一次，到处复用"：知识不在对话里，而在文件里——于是可以用 Git 管版本、可以分享给同学、可以不断迭代。而且它<strong>不改模型本身</strong>：模型还是那个模型，Skill 只是在合适的时机把"方法"递到它眼前。这学期这个仓库里的 concept-learner 就是一个活例子：写好之后，无论学"Agent"还是学"RAG"，走的都是同一套流程。</p>
+</section>
+
+<section>
+  <h2><span class="no">4</span>核心机制 / 组成</h2>
+
+  <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Skill 加载与执行机制示意图">
+    <defs>
+      <marker id="ar2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#15803d"/>
+      </marker>
+    </defs>
+    <rect x="30" y="80" width="170" height="100" rx="12" fill="#f0fdf4" stroke="#15803d"/>
+    <text x="115" y="115" text-anchor="middle" font-size="15" fill="#15803d">SKILL.md</text>
+    <text x="115" y="138" text-anchor="middle" font-size="12.5" fill="#475569">YAML 元数据 + 方法正文</text>
+    <text x="115" y="158" text-anchor="middle" font-size="12.5" fill="#475569">（存放在 .workbuddy/skills/）</text>
+    <rect x="255" y="80" width="170" height="100" rx="12" fill="#ecfeff" stroke="#0e7490"/>
+    <text x="340" y="108" text-anchor="middle" font-size="15" fill="#0e7490">匹配触发</text>
+    <text x="340" y="130" text-anchor="middle" font-size="12.5" fill="#475569">根据 description 判断</text>
+    <text x="340" y="150" text-anchor="middle" font-size="12.5" fill="#475569">当前任务是否适用</text>
+    <rect x="480" y="80" width="170" height="100" rx="12" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="565" y="108" text-anchor="middle" font-size="15" fill="#1e40af">加载执行</text>
+    <text x="565" y="130" text-anchor="middle" font-size="12.5" fill="#475569">正文注入上下文</text>
+    <text x="565" y="150" text-anchor="middle" font-size="12.5" fill="#475569">Agent 按步骤完成任务</text>
+    <line x1="200" y1="130" x2="250" y2="130" stroke="#15803d" stroke-width="2.5" marker-end="url(#ar2)"/>
+    <line x1="425" y1="130" x2="475" y2="130" stroke="#15803d" stroke-width="2.5" marker-end="url(#ar2)"/>
+    <text x="340" y="45" text-anchor="middle" font-size="14" fill="#6b7280">编写（人）→ 触发（AI 判断）→ 执行（AI 行动）</text>
+    <text x="340" y="225" text-anchor="middle" font-size="13.5" fill="#b45309">执行中发现问题 → 修订 SKILL.md → Git 提交 → 越用越好（经验沉淀闭环）</text>
+  </svg>
+
+  <h3>一个 Skill 的基本结构</h3>
+  <pre><code>---
+name: concept-learner          <b># 技能名（目录同名）</b>
+description: 概念学习资料生成器…… <b># 触发依据：AI 读它来判断何时使用</b>
+---
+
+# 技能标题
+## 适用场景    <b>→ 什么时候用</b>
+## 输入信息    <b>→ 调用时要提供什么</b>
+## 生成步骤    <b>→ 按什么流程做</b>
+## 输出结构    <b>→ 产出长什么样</b>
+## 资料来源要求 <b>→ 质量红线（如：禁止编造来源）</b>
+## 自检清单    <b>→ 交付前逐项核对</b></code></pre>
+
+  <h3>关键机制</h3>
+  <table>
+    <tr><th>机制</th><th>说明</th></tr>
+    <tr><td><b>声明式触发</b></td><td>Agent 不需要被告知"请用某技能"，而是根据 <code>description</code> 与当前任务的语义匹配度自主决定——所以 description 写得越准，触发越可靠</td></tr>
+    <tr><td><b>上下文注入</b></td><td>Skill 内容在触发时被放进上下文，与用户输入一起参与推理；不触发时不占窗口空间</td></tr>
+    <tr><td><b>项目级 / 用户级</b></td><td>放在仓库 <code>.workbuddy/skills/</code> 的是项目级（团队共享、随仓库走）；放在个人目录的是用户级（跨项目可用）</td></tr>
+    <tr><td><b>可组合资源</b></td><td>除 SKILL.md 外可附带脚本、模板、参考文件，形成"说明书 + 工具箱"的完整技能包</td></tr>
+  </table>
+  <div class="note"><b>类比的局限</b>：把 Skill 叫"AI 的技能"容易误解为模型学会了新能力。其实它更接近"给一个聪明实习生发了一份 SOP"——能力（聪明）一直在模型里，Skill 提供的是经验（怎么做这件事）。SOP 写得差，聪明实习生也会做错事。</div>
+</section>
+
+<section>
+  <h2><span class="no">5</span>应用场景</h2>
+  <p><b>场景：本课程作业本身就是一次完整的 Skill 实战。</b></p>
+  <table>
+    <tr><th>阶段</th><th>发生了什么</th><th>体现了 Skill 的什么特点</th></tr>
+    <tr><td>设计</td><td>把"怎么学一个概念"总结成八板块流程，写进 <code>.workbuddy/skills/concept-learner/SKILL.md</code></td><td>把个人方法论<b>显性化</b>为文件</td></tr>
+    <tr><td>触发</td><td>对 AI 说"用 concept-learner 学习 Agent 概念"，无需复述任何流程要求</td><td><b>声明式触发</b>，省去重复交代</td></tr>
+    <tr><td>执行</td><td>AI 按八板块生成 agent.html，链接逐一验证、标注访问日期</td><td>Skill 中的<b>来源红线与自检清单</b>约束了质量</td></tr>
+    <tr><td>复用</td><td>接着同样生成 llm-context.html、skill.html，未来任何新概念都能再跑一遍</td><td><b>一次编写，反复复用</b></td></tr>
+    <tr><td>沉淀</td><td>SKILL.md 随仓库 Git 提交，可 diff、可回滚、可分享给同学</td><td><b>版本化</b>的经验资产</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="no">6</span>概念辨析与使用边界</h2>
+  <table>
+    <tr><th>概念</th><th>是什么</th><th>与 Skill 的区别</th></tr>
+    <tr><td><b>Prompt（提示词）</b></td><td>一次对话里说的话术</td><td>一次性、易失、难共享；Skill 是结构化、可版本化、可自动触发的任务知识包</td></tr>
+    <tr><td><b>Agent（智能体）</b></td><td>会规划、用工具、循环干活的执行者</td><td>Agent 是"人"，Skill 是它手里的"SOP 手册"；同一个 Agent 可挂载任意多个 Skill</td></tr>
+    <tr><td><b>工具 / MCP 连接器</b></td><td>给模型接的外部能力（搜索、代码执行、数据库）</td><td>工具解决"能不能做"（能力），Skill 解决"怎么做才对"（方法）；两者常配合：Skill 的步骤里调用工具</td></tr>
+    <tr><td><b>微调 / 训练</b></td><td>改变模型参数本身</td><td>Skill 不碰参数，随取随用、随时可撤；微调持久但昂贵、更新慢</td></tr>
+  </table>
+  <h3>常见误解与使用边界</h3>
+  <ul>
+    <li><b>误解："Skill 越多越好。"</b> 不是。Skill 之间的 description 若语义重叠，会互相抢触发、降低可靠性；按需添加、边界写清楚才有效。</li>
+    <li><b>误解："写了 Skill 就一劳永逸。"</b> Skill 是经验资产，需要在使用中发现问题、持续修订——这正是把 Skill 放进 Git 仓库管理的意义。</li>
+  </ul>
+  <div class="warnbox"><b>使用边界</b>：① Skill 适合"有稳定套路、会重复发生"的任务；一次性的活直接对话即可，别过度工程化；② Skill 是知识不是能力——步骤里用到工具时，前提是环境里真的接了那些工具；③ Skill 质量直接决定输出质量，自检清单和来源红线这类"约束条款"不能省。</div>
+</section>
+
+<section>
+  <h2><span class="no">7</span>自测问题</h2>
+  <details><summary>1.（简答）一个 Skill 文件至少要包含哪两部分？各起什么作用？</summary>
+  <p><b>答：</b>YAML 元数据（name + description，description 是 Agent 判断何时触发的依据）和正文（适用场景、输入、步骤、输出、约束、自检等方法论内容）。</p></details>
+  <details><summary>2.（简答）Skill 是怎么被 AI"学会"的？</summary>
+  <p><b>答：</b>不经过训练。Agent 在任务与 description 语义匹配时，把 SKILL.md 内容加载进上下文，模型据此按步骤执行——是"现场翻手册"，不是"背进脑子"。</p></details>
+  <details><summary>3.（简答）项目级 Skill 和用户级 Skill 有什么区别？本作业用的是哪种？</summary>
+  <p><b>答：</b>项目级放在仓库 <code>.workbuddy/skills/</code>，随仓库共享给所有协作者；用户级放在个人目录，跨项目个人可用。本作业是项目级（方便老师和其他同学直接查看复用）。</p></details>
+  <details><summary>4.（选择）"让 AI 能搜索网页"和"教 AI 按固定八板块生成学习资料"，分别对应？<br>A. 都是 Skill　B. 前者是工具，后者是 Skill　C. 前者是 Skill，后者是工具　D. 都是工具</summary>
+  <p><b>答：B。</b>搜索是接入外部能力（工具/MCP）；八板块流程是沉淀做事方法（Skill）。Skill 的步骤中往往还会调用工具配合完成。</p></details>
+  <details><summary>5.（简答）为什么说 Skill 的 description 是"触发可靠性的生命线"？</summary>
+  <p><b>答：</b>Agent 是否加载一个 Skill，依据是 description 与当前任务的语义匹配。description 含糊或与其他 Skill 重叠，会导致该触发时不触发、不该触发时乱触发。</p></details>
+</section>
+
+<section>
+  <h2><span class="no">8</span>参考来源</h2>
+  <div class="src"><b>① WorkBuddy 官方文档《Skills（技能）》</b>
+    <a href="https://www.workbuddy.cn/docs/workbuddy/skills">https://www.workbuddy.cn/docs/workbuddy/skills</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：Skill 的定义、SKILL.md 结构、项目级 / 用户级目录约定（第 3、4 板块）</span></div>
+  <div class="src"><b>② Anthropic 官方博客《Introducing Claude Skills》</b>
+    <a href="https://claude.com/blog/skills">https://claude.com/blog/skills</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：Agent Skills 的设计理念——把指令与资源打包成可复用、可组合的能力单元（第 3、4 板块）</span></div>
+</section>
+
+<footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
+</div>
+</body>
+</html>

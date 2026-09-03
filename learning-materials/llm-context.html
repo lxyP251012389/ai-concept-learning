@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习资料：大模型的上下文（Context）</title>
+<style>
+  :root{
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
+    --brand:#2563eb; --brand-bg:#eff6ff; --accent:#0e7490; --accent-bg:#ecfeff;
+    --warn:#b45309; --warn-bg:#fffbeb; --ok:#15803d; --ok-bg:#f0fdf4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    line-height:1.75;font-size:16px}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+  header{background:linear-gradient(135deg,#0e7490,#4338ca);color:#fff;border-radius:16px;
+    padding:36px 32px;margin-bottom:28px}
+  header .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    border-radius:999px;padding:2px 14px;font-size:13px;letter-spacing:2px;margin-bottom:14px}
+  header h1{margin:0 0 10px;font-size:34px;letter-spacing:1px}
+  header p{margin:0;opacity:.92;font-size:15px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px 28px;margin-bottom:20px}
+  h2{margin:0 0 16px;font-size:21px;display:flex;align-items:center;gap:10px}
+  h2 .no{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
+    border-radius:8px;background:var(--brand-bg);color:var(--brand);font-size:15px;flex:none}
+  h3{font-size:17px;margin:20px 0 8px}
+  ul,ol{padding-left:1.4em;margin:8px 0}
+  li{margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+  th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
+  td{padding:10px 12px;border:1px solid var(--line);vertical-align:top}
+  .note{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .warnbox{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .okbox{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  details{background:#f8fafc;border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin:10px 0}
+  summary{cursor:pointer;font-weight:600;color:var(--brand)}
+  details[open]{background:#fff}
+  .src{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    margin:10px 0;background:#fafafa;font-size:14.5px}
+  .src b{display:block;margin-bottom:2px}
+  .src .meta{color:var(--muted);font-size:13px}
+  .src a{color:var(--brand);word-break:break-all}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+  svg{max-width:100%;height:auto;display:block;margin:16px auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge">概念学习资料 · 02</span>
+  <h1>大模型的上下文（Context）</h1>
+  <p>由 concept-learner Skill 生成 · 2026-09-03 · 学习深度：入门</p>
+</header>
+
+<section>
+  <h2><span class="no">1</span>学习目标</h2>
+  <ul>
+    <li>能说出"上下文"的准确含义，以及上下文窗口里通常装着哪几类内容</li>
+    <li>能区分模型的<strong>参数知识</strong>与<strong>上下文信息</strong>这两种"知识来源"</li>
+    <li>能解释上下文窗口为什么有限，以及超出后会发生什么（截断 / 压缩）</li>
+    <li>能说出"Lost in the Middle"现象及其对写提示词的启示</li>
+    <li>能解释上下文如何影响 Agent 的工作质量</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="no">2</span>核心问题</h2>
+  <ol>
+    <li>为什么 AI 聊久了会"忘记"你开头提的要求——它不是每次都读全部对话吗？</li>
+    <li>同一个模型，为什么有的回答像"失忆"，有的却能引用你三天前发的文档？</li>
+    <li>"上下文"和"训练数据"都是模型的知识，它们到底有什么本质不同？</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="no">3</span>我的解释</h2>
+  <p>我的理解：上下文就是模型这一次回答问题时<strong>摆在它眼前的一张草稿纸</strong>——系统设定、之前的对话、能用的工具说明、你刚发来的资料和问题，全部写在这张纸上，模型只根据纸上的内容作答。这张纸的尺寸（上下文窗口）是有限的，以 token 计数；写不下的部分会被裁掉或压缩。</p>
+  <p>模型脑子里其实还有另一部分知识——训练时烙进参数里的（相当于背下来的书）。上下文的关键价值是给模型提供了<strong>参数里没有的现场信息</strong>：今天的日期、你的作业要求、刚检索到的网页。所以"上下文管理"本质上就是在有限的纸上，尽量把最相关的信息写进去。</p>
+</section>
+
+<section>
+  <h2><span class="no">4</span>核心机制 / 组成</h2>
+
+  <svg viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="上下文窗口构成示意图">
+    <rect x="120" y="16" width="440" height="298" rx="14" fill="#ffffff" stroke="#4338ca" stroke-width="2"/>
+    <rect x="120" y="16" width="440" height="34" rx="14" fill="#eef2ff"/>
+    <text x="340" y="39" text-anchor="middle" font-size="15" fill="#3730a3">上下文窗口（有限，按 token 计）</text>
+    <rect x="140" y="62" width="400" height="46" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="340" y="90" text-anchor="middle" font-size="14" fill="#1e40af">系统提示（角色设定、规则）</text>
+    <rect x="140" y="116" width="400" height="46" rx="8" fill="#ecfeff" stroke="#0e7490"/>
+    <text x="340" y="144" text-anchor="middle" font-size="14" fill="#0e7490">对话历史（多轮问答累积）</text>
+    <rect x="140" y="170" width="400" height="46" rx="8" fill="#f0fdf4" stroke="#15803d"/>
+    <text x="340" y="198" text-anchor="middle" font-size="14" fill="#15803d">工具 / Skill 定义说明</text>
+    <rect x="140" y="224" width="400" height="46" rx="8" fill="#fffbeb" stroke="#b45309"/>
+    <text x="340" y="252" text-anchor="middle" font-size="14" fill="#b45309">检索到的资料（文档、网页内容）</text>
+    <rect x="140" y="278" width="400" height="30" rx="8" fill="#fdf2f8" stroke="#be185d"/>
+    <text x="340" y="298" text-anchor="middle" font-size="14" fill="#be185d">当前输入</text>
+    <text x="590" y="120" font-size="13" fill="#6b7280">↑ 旧内容可能</text>
+    <text x="590" y="138" font-size="13" fill="#6b7280">被截断/压缩</text>
+  </svg>
+
+  <h3>三种"知识来源"的对比</h3>
+  <table>
+    <tr><th>维度</th><th>参数知识（训练）</th><th>上下文（本次窗口）</th><th>外部记忆（RAG / 文件）</th></tr>
+    <tr><td>类比</td><td>长期记忆（背下来的书）</td><td>短期工作记忆（眼前的草稿纸）</td><td>图书馆（要用才去查）</td></tr>
+    <tr><td>更新方式</td><td>重新训练 / 微调，慢且贵</td><td>每次对话即时更新</td><td>随时增删，与模型无关</td></tr>
+    <tr><td>时效性</td><td>止步于训练截止日</td><td>实时（可含刚检索的内容）</td><td>实时</td></tr>
+    <tr><td>容量</td><td>极大（固化在参数里）</td><td>有限（几 K～1M token）</td><td>无限，按需取用</td></tr>
+  </table>
+
+  <h3>关键现象与机制</h3>
+  <ul>
+    <li><b>窗口有限，按 token 计</b>：不同模型窗口从几千到上百万 token 不等；中文一个汉字通常约 1～2 个 token，1 万字对话≈1.5 万 token 起。</li>
+    <li><b>超出窗口怎么办</b>：要么<strong>截断</strong>（丢掉最旧的内容——这就是"聊久了忘记开头"的原因），要么<strong>压缩/摘要</strong>（把早期对话总结成一段塞回去，省空间但有损）。</li>
+    <li><b>Lost in the Middle</b>：研究发现模型对开头和结尾的信息记得最牢，塞在中间的内容容易被忽略。写提示词时应把最重要的要求和资料放在开头或结尾。</li>
+    <li><b>注意力机制</b>：模型通过注意力对窗口内所有 token 建立关联——上下文里的每一段文字都在互相"竞争"注意力，无关内容越多，关键信息被稀释得越厉害。</li>
+  </ul>
+  <div class="note"><b>类比的局限</b>：把上下文比作"草稿纸"会让人以为信息可以随便擦写。实际上每轮推理时上下文是整体重建的（历史对话会原样重新输入一遍），"擦掉"只是不再携带，而 token 成本是按每次全部输入计算的——所以长对话越聊越贵、越慢。</div>
+</section>
+
+<section>
+  <h2><span class="no">5</span>应用场景</h2>
+  <p><b>场景：让 AI 帮你改一份 8000 字的课程报告（真实高频场景）。</b></p>
+  <ol>
+    <li>你把报告全文粘贴进对话框，附一句"帮我把第二部分改得更学术一点"——报告全文 + 指令此刻全部进入了<strong>上下文</strong>；</li>
+    <li>AI 能精准改写，因为它"眼前"能看到全文（这比它参数里的任何写作知识都关键）；</li>
+    <li>接着你连续问了十几个别的问题，对话越滚越长；</li>
+    <li>你再问"刚才报告第三段的结论帮我也润色一下"——此时报告全文可能已被挤<strong>出窗口</strong>（被截断或压缩），AI 开始答非所问，甚至一本正经地"编"出第三段内容（幻觉）；</li>
+    <li><b>正确姿势</b>：开一个新对话重新贴原文，或使用支持文件挂载 / 记忆检索的工具，让系统在需要时把原文重新取回放进上下文。</li>
+  </ol>
+  <p>这个场景说明：<strong>同一台模型，上下文组织得好坏直接决定输出质量</strong>——模型没变，变的是它"眼前能看到什么"。</p>
+</section>
+
+<section>
+  <h2><span class="no">6</span>概念辨析与使用边界</h2>
+  <table>
+    <tr><th>易混概念</th><th>区别一句话</th></tr>
+    <tr><td><b>上下文 vs 训练数据</b></td><td>训练数据在训练时固化进参数、回答时不可见；上下文是回答这一刻摆在眼前的现场信息</td></tr>
+    <tr><td><b>上下文窗口 vs 内存（RAM）</b></td><td>类比相似（都讲容量上限），但窗口不"驻留"——每轮推理都重新完整输入一遍，成本按次数累加</td></tr>
+    <tr><td><b>RAG vs 微调</b></td><td>RAG 是"考试前把资料带进考场"（进上下文）；微调是"考前把资料背进脑子"（进参数）。前者即时、可撤；后者持久、昂贵</td></tr>
+    <tr><td><b>上下文 vs 记忆功能</b></td><td>很多产品的"记忆"是外挂系统：把要点存进数据库，下次对话自动取回、再注入上下文——窗口内仍是当下这一次</td></tr>
+  </table>
+  <h3>常见误解与使用边界</h3>
+  <ul>
+    <li><b>误解："窗口 128K，我塞 10 万字它就全能记住。"</b> 记得进 ≠ 记得牢：中间内容容易被忽略（Lost in the Middle），关键信息要放开头/结尾。</li>
+    <li><b>误解："上下文长 = 模型聪明。"</b> 窗口只是"能看多少"，推理能力由模型本身决定；长窗口塞满噪声反而稀释注意力、降低表现。</li>
+  </ul>
+  <div class="warnbox"><b>使用边界</b>：① 长文档优先"按需检索注入"，而不是整包塞入；② 多轮长任务要主动开新会话或做摘要压缩；③ 涉及精确引用的内容（数据、条款、代码）尽量重贴原文，不要依赖模型对早期上下文的"记忆"。</div>
+</section>
+
+<section>
+  <h2><span class="no">7</span>自测问题</h2>
+  <details><summary>1.（简答）上下文窗口里通常装着哪几类内容？</summary>
+  <p><b>答：</b>系统提示、对话历史、工具/Skill 定义说明、检索到的外部资料、当前输入（五类，见第 4 板块示意图）。</p></details>
+  <details><summary>2.（简答）为什么 AI 聊久了会忘记你最初提的要求？</summary>
+  <p><b>答：</b>对话持续累积，总 token 超出上下文窗口上限后，系统会截断或压缩最早的内容，最初的要求可能已被丢弃或摘要得面目全非。</p></details>
+  <details><summary>3.（简答）参数知识和上下文信息有什么本质区别？各举一例。</summary>
+  <p><b>答：</b>参数知识是训练时固化进模型权重的长期知识（如"Python 的语法"），推理时只读不写；上下文是本次对话现场提供的信息（如"你刚贴的报告原文"），每次对话重新构建、可即时增删。</p></details>
+  <details><summary>4.（简答）Lost in the Middle 现象是什么？对写提示词有什么启示？</summary>
+  <p><b>答：</b>模型对窗口开头与结尾的信息利用率高，中间部分容易被忽略。启示：核心指令和关键资料放在开头或结尾，长资料中间不放关键信息；无关内容尽量精简，避免稀释注意力。</p></details>
+  <details><summary>5.（选择）想让 AI 准确回答你公司内部文档的问题，最合适的做法是？<br>A. 微调模型　B. 把文档检索后注入上下文（RAG）　C. 换更大的模型　D. 多问几遍</summary>
+  <p><b>答：B。</b>内部文档属于模型参数里没有的实时信息，按需检索注入上下文即可即时生效；微调昂贵且更新慢，换模型解决不了"没见过这份文档"的问题。</p></details>
+</section>
+
+<section>
+  <h2><span class="no">8</span>参考来源</h2>
+  <div class="src"><b>① IBM Technology《What is an LLM context window?》</b>
+    <a href="https://www.ibm.com/think/topics/llm-context-window">https://www.ibm.com/think/topics/llm-context-window</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：上下文窗口定义、token 计量、窗口有限性（第 3、4 板块）</span></div>
+  <div class="src"><b>② Microsoft Learn《Prompt engineering techniques》</b>
+    <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering">https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：系统消息与用户消息的构成、上下文组织对效果的影响（第 4、5 板块）</span></div>
+  <div class="src"><b>③ Liu et al.《Lost in the Middle: How Language Models Use Long Contexts》（arXiv:2307.03172）</b>
+    <a href="https://arxiv.org/abs/2307.03172">https://arxiv.org/abs/2307.03172</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：中间位置信息利用率低的实验结论（第 4 板块、第 6 板块启示）</span></div>
+</section>
+
+<footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念关系说明：Agent · 上下文 · Skill</title>
+<style>
+  :root{
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
+    --brand:#2563eb; --brand-bg:#eff6ff; --accent:#0e7490; --accent-bg:#ecfeff;
+    --warn:#b45309; --warn-bg:#fffbeb; --ok:#15803d; --ok-bg:#f0fdf4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    line-height:1.75;font-size:16px}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+  header{background:linear-gradient(135deg,#7c3aed,#b45309);color:#fff;border-radius:16px;
+    padding:36px 32px;margin-bottom:28px}
+  header .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    border-radius:999px;padding:2px 14px;font-size:13px;letter-spacing:2px;margin-bottom:14px}
+  header h1{margin:0 0 10px;font-size:32px;letter-spacing:1px}
+  header p{margin:0;opacity:.92;font-size:15px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px 28px;margin-bottom:20px}
+  h2{margin:0 0 16px;font-size:21px;display:flex;align-items:center;gap:10px}
+  h2 .no{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
+    border-radius:8px;background:#f5f3ff;color:#7c3aed;font-size:15px;flex:none}
+  h3{font-size:17px;margin:20px 0 8px}
+  ul,ol{padding-left:1.4em;margin:8px 0}
+  li{margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+  th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
+  td{padding:10px 12px;border:1px solid var(--line);vertical-align:top}
+  .note{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .warnbox{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .okbox{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px}
+  .src{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    margin:10px 0;background:#fafafa;font-size:14.5px}
+  .src b{display:block;margin-bottom:2px}
+  .src .meta{color:var(--muted);font-size:13px}
+  .src a{color:var(--brand);word-break:break-all}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+  svg{max-width:100%;height:auto;display:block;margin:16px auto}
+  code{background:#eff6ff;color:#1d4ed8;border-radius:4px;padding:1px 6px;font-size:14px;
+    font-family:Consolas,"Courier New",monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge">概念关系说明</span>
+  <h1>Agent · 大模型的上下文 · Skill<br>—— 三个概念如何咬合成一台"学习工作机"</h1>
+  <p>由 concept-learner Skill 生成 · 2026-09-03</p>
+</header>
+
+<section>
+  <h2><span class="no">1</span>一句话总览</h2>
+  <p style="font-size:17.5px">
+    <b>Agent 是"执行者"，上下文是它每一步决策时"眼前的世界"，Skill 是写下来、可复用的"做事方法"。</b><br>
+    三者的咬合方式：<span style="color:#7c3aed">Skill（经验）在合适的时机被注入上下文（信息环境），上下文决定 Agent（行动者）这一步怎么想、怎么做；行动的结果又反过来修订 Skill——形成一个"经验 → 记忆 → 行动 → 更新经验"的闭环。</p>
+  </p>
+</section>
+
+<section>
+  <h2><span class="no">2</span>三者角色速览</h2>
+  <table>
+    <tr><th>维度</th><th>Agent 智能体</th><th>大模型的上下文</th><th>Skill 技能</th></tr>
+    <tr><td>一句话定位</td><td>自主拆解并完成任务的执行者</td><td>Agent 决策时可见的信息环境</td><td>沉淀成文件的可复用任务方法</td></tr>
+    <tr><td>类比（一个团队）</td><td>干活的实习生</td><td>他桌上摊开的所有材料</td><td>公司发给他的 SOP 手册</td></tr>
+    <tr><td>存在的形式</td><td>运行中的程序 / 会话</td><td>一次推理的输入内容（转瞬即逝）</td><td>仓库里的文件（持久、可版本化）</td></tr>
+    <tr><td>生命周期</td><td>任务期间</td><td>单轮推理，每轮重建</td><td>跨会话、跨项目长期存在</td></tr>
+    <tr><td>本作业中的体现</td><td>WorkBuddy 里执行整个流程的 AI</td><td>SKILL.md 内容 + 对话历史 + 检索结果</td><td><code>.workbuddy/skills/concept-learner/</code></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="no">3</span>关系图</h2>
+  <svg viewBox="0 0 680 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent、上下文、Skill 三者关系图">
+    <defs>
+      <marker id="a1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+      </marker>
+      <marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#7c3aed"/>
+      </marker>
+      <marker id="a3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#b45309"/>
+      </marker>
+    </defs>
+
+    <!-- 上下文大框 -->
+    <rect x="90" y="20" width="500" height="240" rx="16" fill="#ecfeff" stroke="#0e7490" stroke-width="2" stroke-dasharray="8 5"/>
+    <text x="340" y="48" text-anchor="middle" font-size="15" fill="#0e7490" font-weight="bold">上下文（Agent 每一步决策"眼前的世界"）</text>
+
+    <!-- 上下文内部元素 -->
+    <rect x="120" y="66" width="200" height="52" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="220" y="88" text-anchor="middle" font-size="13.5" fill="#475569">对话历史 / 任务目标</text>
+    <text x="220" y="106" text-anchor="middle" font-size="13.5" fill="#475569">（Agent 的行动轨迹）</text>
+    <rect x="360" y="66" width="200" height="52" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="460" y="88" text-anchor="middle" font-size="13.5" fill="#475569">工具返回的观察结果</text>
+    <text x="460" y="106" text-anchor="middle" font-size="13.5" fill="#475569">（环境反馈）</text>
+
+    <!-- Skill 注入上下文 -->
+    <rect x="30" y="300" width="180" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text x="120" y="325" text-anchor="middle" font-size="15" fill="#7c3aed" font-weight="bold">Skill（SKILL.md）</text>
+    <text x="120" y="346" text-anchor="middle" font-size="12.5" fill="#64748b">沉淀的任务方法</text>
+    <path d="M140,296 C150,220 200,160 265,110" fill="none" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#a2)"/>
+    <text x="140" y="215" font-size="13" fill="#7c3aed">匹配时注入</text>
+
+    <!-- Agent -->
+    <rect x="280" y="150" width="180" height="84" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+    <text x="370" y="182" text-anchor="middle" font-size="17" fill="#1e40af" font-weight="bold">Agent</text>
+    <text x="370" y="204" text-anchor="middle" font-size="13" fill="#475569">LLM 推理 + 规划 + 调用工具</text>
+    <text x="370" y="222" text-anchor="middle" font-size="13" fill="#475569">（感知 → 思考 → 行动 → 观察）</text>
+
+    <!-- Agent 行动 -->
+    <path d="M465,192 C560,192 610,240 610,300 C610,352 500,360 420,345" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#a1)"/>
+    <text x="596" y="270" font-size="13" fill="#2563eb">行动（用工具）</text>
+
+    <!-- 反馈修订 Skill -->
+    <path d="M400,352 C330,368 240,362 218,332" fill="none" stroke="#b45309" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#a3)"/>
+    <text x="285" y="374" font-size="13" fill="#b45309">执行中发现问题 → 修订 Skill（Git 版本化）</text>
+
+    <text x="340" y="290" text-anchor="middle" font-size="13.5" fill="#6b7280">↑ 上下文内容 = Agent 能看见的全部；窗口有限，需精心组织</text>
+  </svg>
+  <p style="text-align:center;color:var(--muted);font-size:14px;margin-top:4px">图：Skill 经触发注入上下文 → 上下文构成 Agent 的决策依据 → Agent 行动产生新观察写回上下文 → 执行反馈驱动 Skill 迭代</p>
+</section>
+
+<section>
+  <h2><span class="no">4</span>上下文如何影响 Agent 的工作</h2>
+  <p>Agent 每一轮"思考"，本质上就是 LLM 对当时上下文做的一次推理。<strong>上下文之外的世界，对 Agent 而言不存在。</strong>这带来四条直接影响：</p>
+  <ol>
+    <li><b>上下文质量 = 决策质量</b>。上下文里若没有任务要求，Agent 就"不知道"要求；若有错误的观察结果，它就基于错误事实行动。垃圾进，垃圾出。</li>
+    <li><b>窗口有限，必须取舍</b>。多步任务的对话历史、工具返回、资料引用会持续累积，逼近窗口上限后系统只能截断或压缩——早期的重要约定（比如"报告必须用中文"）可能被丢弃，导致 Agent 后期跑偏。</li>
+    <li><b>位置影响注意力</b>。受 Lost in the Middle 现象影响，塞在上下文中部的关键信息更容易被忽略；这也解释了为什么 Skill 里要把"红线要求"写成显眼的清单放在末尾——自检清单正是在管理这一点。</li>
+    <li><b>上下文是 Agent 唯一的"记忆通道"</b>。外部记忆（文件、数据库）也只有被取回、放进上下文，才能真正影响 Agent 的下一步。<b>喂进上下文，知识才生效。</b></li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="no">5</span>Skill 如何沉淀可复用的任务知识</h2>
+  <p>Skill 解决的是另一个问题：<strong>好方法不该每次都重新发明。</strong>没有 Skill 时，"怎么把一个概念学透"这件事只存在于某次对话里——换个会话、换个概念，一切从头再来。Skill 把方法沉淀下来：</p>
+  <table>
+    <tr><th>沉淀维度</th><th>没有 Skill 时</th><th>有了 Skill 之后</th></tr>
+    <tr><td><b>显性化</b></td><td>方法散落在对话记录里，难以复述</td><td>写成结构化文件（场景/输入/步骤/输出/自检）</td></tr>
+    <tr><td><b>复用</b></td><td>每次重新口头交代一遍要求</td><td>语义匹配自动触发，"教一次，到处用"</td></tr>
+    <tr><td><b>协作</b></td><td>经验无法传递给别人（和未来的自己）</td><td>项目级目录随仓库共享，同学 clone 即得</td></tr>
+    <tr><td><b>演进</b></td><td>改了要求没法追踪历史</td><td>Git 提交历史 = 方法论的进化史，可 diff 可回滚</td></tr>
+  </table>
+  <p>而 Skill 发挥作用的机制，恰恰又是"进入上下文"——<strong>这把三个概念串成了一条线：Skill（持久的经验）在触发时刻转化为上下文（临时的现场信息），上下文塑造 Agent（当下的行为）。</strong>三者的关系可以概括为：<b>知识活在文件里，生效在上下文里，落地在行动里。</b></p>
+</section>
+
+<section>
+  <h2><span class="no">6</span>一个闭环实例：本次作业</h2>
+  <ol>
+    <li><b>沉淀（Skill → 文件）</b>：把"概念学习八板块法"写成 <code>concept-learner/SKILL.md</code>，提交进 Git；</li>
+    <li><b>触发与注入（Skill → 上下文）</b>：说"用 concept-learner 学习 Agent"，SKILL.md 的流程要求进入上下文；</li>
+    <li><b>执行（上下文 → Agent 行动）</b>：Agent 按流程检索来源、验证链接、生成 agent.html——期间所有搜索结果、网页内容都在持续写入上下文；</li>
+    <li><b>反馈（行动 → Skill 迭代）</b>：人工核查发现某处类比不妥 → 修改资料，必要时修订 SKILL.md（比如"类比必须说明局限"就是一条经验教训固化成的规则）→ 再次提交。</li>
+  </ol>
+  <div class="okbox"><b>我的总结</b>：Agent 提供"把事做完"的执行力，上下文提供"当下看见什么"的信息环境，Skill 提供"怎么做才好"的长期经验。三者缺一：没有 Agent，方法只是纸面文章；没有上下文管理，执行者很快"失忆"跑偏；没有 Skill，每次都从零开始、经验无法积累。理解了这三个概念的咬合关系，也就理解了 AI 辅助学习的正确姿势——<b>与其每次求 AI"聪明一点"，不如把好方法沉淀成 Skill，把关键信息管理进上下文，让 Agent 按套路稳定发挥。</b></div>
+</section>
+
+<section>
+  <h2><span class="no">7</span>参考来源</h2>
+  <div class="src"><b>① Anthropic 官方工程博客《Building Effective Agents》</b>
+    <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：Agent 的循环决策机制、工作流与智能体的边界（第 4 板块）</span></div>
+  <div class="src"><b>② Liu et al.《Lost in the Middle: How Language Models Use Long Contexts》（arXiv:2307.03172）</b>
+    <a href="https://arxiv.org/abs/2307.03172">https://arxiv.org/abs/2307.03172</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：上下文中信息位置对利用率的影响（第 4 板块）</span></div>
+  <div class="src"><b>③ WorkBuddy 官方文档《Skills（技能）》</b>
+    <a href="https://www.workbuddy.cn/docs/workbuddy/skills">https://www.workbuddy.cn/docs/workbuddy/skills</a>
+    <span class="meta">访问日期：2026-09-03 · 支撑内容：项目级 Skill 的存放目录与触发机制（第 5 板块）</span></div>
+</section>
+
+<footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
+</div>
+</body>
+</html>
