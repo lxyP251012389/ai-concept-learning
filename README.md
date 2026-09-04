@@ -43,7 +43,8 @@ ai-concept-learning/
 | `learning-materials/agent.html` | Agent（智能体） | LLM + 工具 + 上下文 + 规划循环，自主把多步任务做完的执行者 |
 | `learning-materials/llm-context.html` | 大模型的上下文 | 模型每次推理时"眼前的草稿纸"：系统提示、对话历史、工具说明、检索资料与当前输入 |
 | `learning-materials/skill.html` | Skill（技能） | 写给 AI 的 SOP 手册：把做事方法沉淀为可版本化、可复用、可自动触发的文件 |
-| `learning-materials/concept-relationship.html` | 三者关系 | Skill（经验）注入上下文（信息环境）塑造 Agent（行动），行动反馈再迭代 Skill |
+| `learning-materials/rag.html` | RAG（检索增强生成） | 把"参数里没有的现场知识"按需检索并拼进上下文，再让 LLM 生成答案——与 llm-context.html 概念直接呼应 |
+| `learning-materials/concept-relationship.html` | 四者关系 | Skill（经验）注入上下文（信息环境）塑造 Agent（行动），RAG 是"按需供给上下文的工业实践"，行动反馈再迭代 Skill |
 
 ## AI 使用说明与人工核查记录
 
@@ -68,6 +69,7 @@ ai-concept-learning/
   - Skill 第 4 题："能搜索网页"是给模型接入能力（工具/MCP），"按八板块生成资料"是沉淀做事方法（Skill）——工具管"能不能做"，Skill 管"怎么做才对"；
   - Skill 第 5 题：Agent 是否加载 Skill，依据是 description 与当前任务的语义匹配，写得含糊或与其他 Skill 重叠就会漏触发、误触发。
   薄弱点集中在 Skill 概念，已重点复习 skill.html 第 4、6 板块。
+- 2026-09-04（Skill 复用性验证 + 迭代）：用同一个 concept-learner Skill 学习 RAG 概念，生成 rag.html 验证 Skill 可复用于任何新概念（不止最初三个）。同时把使用中发现的新经验（概念回链、批量验证来源、自测答案可读性、经验沉淀）写入 SKILL.md「使用经验与迭代记录」第八节，形成"使用→沉淀→再使用"完整闭环。RAG 概念的「我的解释」显式回链了 llm-context.html，体现概念网络在扩展而非散点。
 - 后续：学习过程中持续修订迭代，每次修订均以独立 commit 记录。
 
 ## 版本与安全
