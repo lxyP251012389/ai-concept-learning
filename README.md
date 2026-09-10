@@ -16,7 +16,8 @@ ai-concept-learning/
 │   ├── agent.html                # 概念一：Agent（智能体）
 │   ├── llm-context.html          # 概念二：大模型的上下文（Context）
 │   ├── skill.html                # 概念三：Skill（技能）
-│   └── concept-relationship.html # 三者关系说明（含关系图）
+│   ├── rag.html                  # 概念四：RAG（检索增强生成）
+│   └── concept-relationship.html # 四者关系说明（含关系图）
 ├── README.md
 └── .gitignore
 ```
@@ -46,6 +47,8 @@ ai-concept-learning/
 | `learning-materials/rag.html` | RAG（检索增强生成） | 把"参数里没有的现场知识"按需检索并拼进上下文，再让 LLM 生成答案——与 llm-context.html 概念直接呼应 |
 | `learning-materials/concept-relationship.html` | 四者关系 | Skill（经验）注入上下文（信息环境）塑造 Agent（行动），RAG 是"按需供给上下文的工业实践"，行动反馈再迭代 Skill |
 
+**可视化**：5 份资料第 5 板块（应用场景）均配 1 张 Mermaid 时序图（CDN 引入，离线时显示源代码而非空白），配 2-4 句图后文字解读；第 4 板块各保留 1 张 SVG 机制图。Skill 自检清单第 4、5 板块「配图」要求已 100% 落地。
+
 ## AI 使用说明与人工核查记录
 
 **AI 参与的部分**：
@@ -70,6 +73,7 @@ ai-concept-learning/
   - Skill 第 5 题：Agent 是否加载 Skill，依据是 description 与当前任务的语义匹配，写得含糊或与其他 Skill 重叠就会漏触发、误触发。
   薄弱点集中在 Skill 概念，已重点复习 skill.html 第 4、6 板块。
 - 2026-09-04（Skill 复用性验证 + 迭代）：用同一个 concept-learner Skill 学习 RAG 概念，生成 rag.html 验证 Skill 可复用于任何新概念（不止最初三个）。同时把使用中发现的新经验（概念回链、批量验证来源、自测答案可读性、经验沉淀）写入 SKILL.md「使用经验与迭代记录」第八节，形成"使用→沉淀→再使用"完整闭环。RAG 概念的「我的解释」显式回链了 llm-context.html，体现概念网络在扩展而非散点。
+- 2026-09-10（落地可视化）：按 Skill 自检要求，给 5 份学习资料第 5 板块（应用场景）各补 1 张 Mermaid 时序图 + 图后 2-4 句文字解读（Agent 调研时序、上下文装配压力、Skill 实战时序、RAG 检索时序、四者协作时序），并在 `<head>` 引入一次性 Mermaid CDN（离线时图表块显示源代码而非空白），CSS 加 `.figure` / `.mermaid` / `.mermaid-legend` 三类样式。补完后 Skill 第 4.5 节「可视化规范」从"写在文档里的规则"变成"在资料里实际生效的产物"——Mermaid 在节点文字短、箭头语义、配色三方面与 SVG 保持一致。第 4 板块原有的 1 张 SVG 机制图保留（已满足"至少配 1 张可视化图"要求），未来可二次迭代统一为 Mermaid。
 - 后续：学习过程中持续修订迭代，每次修订均以独立 commit 记录。
 
 ## 版本与安全
@@ -80,6 +84,8 @@ ai-concept-learning/
 
 ## 后续计划
 
-- [ ] 用 concept-learner 持续生成后续课程概念的学习资料（RAG、注意力机制、数据仓库……）
-- [ ] 在使用中迭代 SKILL.md（补充新发现的规则与自检项）
+- [x] 用 concept-learner 持续生成后续课程概念的学习资料（已含 RAG）
+- [x] 在使用中迭代 SKILL.md（已迭代到第八节「使用经验与迭代记录」）
+- [x] 给 5 份资料补 Mermaid 应用场景时序图（已落地，离线降级为源代码显示）
 - [ ] 尝试设计第二个个人 Skill（如"实验报告生成器"）
+- [ ] 把第 4 板块的 SVG 统一升级为 Mermaid（保持风格一致性）
