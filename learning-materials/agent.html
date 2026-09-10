@@ -8,15 +8,16 @@
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
-    --brand:#2563eb; --brand-bg:#eff6ff; --accent:#0e7490; --accent-bg:#ecfeff;
-    --warn:#b45309; --warn-bg:#fffbeb; --ok:#15803d; --ok-bg:#f0fdf4;
+    --brand:#2563eb; --brand-bg:#eff6ff; --brand-ink:#1e40af;
+    --warn:#b45309; --warn-bg:#fffbeb; --warn-ink:#92400e;
+    --neutral:#475569; --neutral-bg:#f1f5f9;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
     line-height:1.75;font-size:16px}
   .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
-  header{background:linear-gradient(135deg,#1d4ed8,#0e7490);color:#fff;border-radius:16px;
+  header{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border-radius:16px;
     padding:36px 32px;margin-bottom:28px}
   header .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
     border-radius:999px;padding:2px 14px;font-size:13px;letter-spacing:2px;margin-bottom:14px}
@@ -31,18 +32,22 @@
   ul,ol{padding-left:1.4em;margin:8px 0}
   li{margin:6px 0}
   table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
-  th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
+  th{background:var(--neutral-bg);text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
   td{padding:10px 12px;border:1px solid var(--line);vertical-align:top}
-  .note{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:8px;
+  .note{background:var(--brand-bg);border-left:4px solid var(--brand);border-radius:8px;
     padding:12px 16px;margin:14px 0;font-size:15px}
   .warnbox{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:8px;
     padding:12px 16px;margin:14px 0;font-size:15px}
-  .okbox{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:8px;
-    padding:12px 16px;margin:14px 0;font-size:15px}
+  .metabox{background:var(--neutral-bg);border-left:4px solid var(--neutral);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px;color:var(--ink)}
   details{background:#f8fafc;border:1px solid var(--line);border-radius:10px;
     padding:12px 16px;margin:10px 0}
   summary{cursor:pointer;font-weight:600;color:var(--brand)}
   details[open]{background:#fff}
+  details .ans-block{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+  details .ans-block .lbl{display:inline-block;font-size:12px;color:var(--muted);margin-right:6px}
+  details .ans-block .lbl.feedback{color:var(--warn)}
+  details .ans-block .lbl.ref{color:var(--neutral)}
   .src{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
     margin:10px 0;background:#fafafa;font-size:14.5px}
   .src b{display:block;margin-bottom:2px}
@@ -56,7 +61,9 @@
   .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
   .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
   .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
-  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
+  .mermaid-legend{background:var(--neutral-bg);border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
+  code{background:var(--brand-bg);color:var(--brand-ink);border-radius:4px;padding:1px 6px;font-size:14px;
+    font-family:Consolas,"Courier New",monospace}
 </style>
 </head>
 <body>
@@ -65,33 +72,45 @@
 <header>
   <span class="badge">概念学习资料 · 01</span>
   <h1>Agent（智能体）</h1>
-  <p>由 concept-learner Skill 生成 · 2026-09-03 · 学习深度：入门</p>
+  <p>由 concept-learner Skill 生成 · 2026-09-10 二次修订 · 学习深度：入门</p>
 </header>
 
 <section>
   <h2><span class="no">1</span>学习目标</h2>
   <ul>
-    <li>能说出 Agent 的定义，以及它和普通"聊天机器人"的本质区别</li>
-    <li>能列出 Agent 的四个核心组成部分，并说明各自的作用</li>
-    <li>能描述 Agent Loop（感知—思考—行动循环）是如何运转的</li>
-    <li>能举出一个 Agent 的具体应用场景，并说明每一步发生了什么</li>
-    <li>能说出使用 Agent 的两条以上边界（什么情况下不该用）</li>
+    <li><b>能说出</b>Agent 的定义，以及它和普通"聊天机器人"的本质区别</li>
+    <li><b>能列出</b>Agent 的四个核心组成部分，并说明各自的作用</li>
+    <li><b>能描述</b>Agent Loop（感知—思考—行动—观察）的运转步骤</li>
+    <li><b>能举出</b>一个 Agent 的具体应用场景，并指出每一步对应机制图的哪个节点</li>
+    <li><b>能判断</b>下列说法是否正确："接了插件的对话助手就是 Agent"、"Agent 总比 Workflow 更好"</li>
+    <li><b>能区分</b>至少两条 Agent 的使用边界（什么时候不该用 Agent）</li>
   </ul>
 </section>
 
 <section>
   <h2><span class="no">2</span>核心问题</h2>
   <ol>
-    <li>同样是调用大模型，为什么有的只能"一问一答"，有的却能"自己把活干完"？差别到底在哪里？</li>
-    <li>Agent 的"自主性"来自哪里——是模型本身更聪明了，还是外部给了它什么东西？</li>
-    <li>任务交给 Agent 就一定能做得更好吗？什么时候反而不如固定流程？</li>
+    <li><b>定义性</b>：同样是调用大模型，为什么有的只能"一问一答"，有的却能"自己把活干完"？差别到底在哪里？</li>
+    <li><b>机制性</b>：Agent 的"自主性"来自哪里——是模型本身更聪明了，还是外部给了它某种机制让它能"自己转起来"？</li>
+    <li><b>边界性</b>：任务交给 Agent 就一定能做得更好吗？什么时候反而不如固定流程？</li>
   </ol>
 </section>
 
 <section>
-  <h2><span class="no">3</span>我的解释</h2>
-  <p>我的理解：<strong>Agent 就是懂得主动思考、调用工具、能独立干完复杂事情的 AI</strong>。关键在"主动"二字——普通大模型只会一问一答，Agent 却能自己把"帮我写个报告"这样的模糊目标，拆成查资料、读文件、写初稿、检查修改一整套动作，边做边看结果、边调整方案，循环到把事做完为止。</p>
-  <p>打个比方：大模型像一个博学但手脚被绑住的人，什么都懂却只能动嘴；Agent 就是把这个"人"解放出来——接上工具当手脚、给它上下文当工作记忆、再给它一个目标，剩下的路它自己走。所以判断一个东西是不是 Agent，不看界面长什么样，就看<strong>主动思考、调用工具、独立完成</strong>这三件事齐不齐。</p>
+  <h2><span class="no">3</span>通俗解释</h2>
+  <p><b>一句话定义</b>：Agent 是一种能主动规划任务、调用工具、并基于结果自我修正的 AI 执行单元。</p>
+
+  <p><b>类比</b>：可以把它理解为"被解开了手脚的博学助理"——普通大模型像一个博学但手脚被绑住的人，只懂回答；Agent 则是给这个人接上了工具（手脚）、配上了工作台（上下文），再交给它一个目标，剩下的路它自己走。</p>
+
+  <p><b>类比的局限</b>：把人比作 Agent 容易暗示 Agent 内部有持续的"意识"在思考。实际上 LLM 每一轮都是无状态地重新读取上下文再推理一次，"自主性"是一圈圈循环叠加出来的视觉错觉，模型本身没有持续的意志。</p>
+
+  <p><b>关键特征</b>（缺一不可）：</p>
+  <ul>
+    <li><b>主动规划</b>：自行把模糊目标拆成可执行步骤</li>
+    <li><b>调用工具</b>：用工具落地具体动作（不是只动嘴）</li>
+    <li><b>循环执行</b>：每一步基于上一步的结果再决策</li>
+    <li><b>自我修正</b>：发现错误会调整方案，而不是一路跑到黑</li>
+  </ul>
 </section>
 
 <section>
@@ -112,10 +131,10 @@
     </defs>
     <rect x="250" y="20" width="180" height="56" rx="12" fill="#eff6ff" stroke="#2563eb"/>
     <text x="340" y="53" text-anchor="middle" font-size="16" fill="#1e40af">① 接收目标 / 感知</text>
-    <rect x="470" y="110" width="180" height="56" rx="12" fill="#ecfeff" stroke="#0e7490"/>
-    <text x="560" y="143" text-anchor="middle" font-size="16" fill="#0e7490">② LLM 思考规划</text>
-    <rect x="250" y="200" width="180" height="56" rx="12" fill="#f0fdf4" stroke="#15803d"/>
-    <text x="340" y="233" text-anchor="middle" font-size="16" fill="#15803d">③ 调用工具行动</text>
+    <rect x="470" y="110" width="180" height="56" rx="12" fill="#f8fafc" stroke="#475569"/>
+    <text x="560" y="143" text-anchor="middle" font-size="16" fill="#475569">② LLM 思考规划</text>
+    <rect x="250" y="200" width="180" height="56" rx="12" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="340" y="233" text-anchor="middle" font-size="16" fill="#1e40af">③ 调用工具行动</text>
     <rect x="30" y="110" width="180" height="56" rx="12" fill="#fffbeb" stroke="#b45309"/>
     <text x="120" y="137" text-anchor="middle" font-size="16" fill="#b45309">④ 观察结果</text>
     <text x="120" y="157" text-anchor="middle" font-size="13" fill="#b45309">（写回上下文）</text>
@@ -136,7 +155,7 @@
     <li><b>观察</b>：把工具返回的结果写回上下文，再回到第 2 步重新思考</li>
     <li><b>终止</b>：LLM 判断目标已达成（或触发护栏上限），输出最终结果</li>
   </ol>
-  <div class="note"><b>类比的局限</b>：把 LLM 比作"大脑"容易让人误以为它有持续的意识。实际上每一轮循环里，模型都是无状态地重新读取上下文再做一次推理——"连续的自主性"其实是一圈圈循环叠加出来的效果，而不是模型内部有个"小人"在思考。</div>
+  <div class="note"><b>类比的局限（细化）</b>：把 LLM 比作"大脑"容易让人误以为它有持续的意识。实际上每一轮循环里，模型都是无状态地重新读取上下文再做一次推理——"连续的自主性"其实是一圈圈循环叠加出来的效果，而不是模型内部有个"小人"在思考。</div>
 </section>
 
 <section>
@@ -177,48 +196,92 @@
 </section>
 
 <section>
-  <h2><span class="no">6</span>概念辨析与使用边界</h2>
+  <h2><span class="no">6</span>概念辨析（易混淆 + 使用边界）</h2>
+
+  <h3>易混淆对比表</h3>
   <table>
     <tr><th>对比维度</th><th>Chatbot 聊天机器人</th><th>Workflow 工作流</th><th>Agent 智能体</th></tr>
     <tr><td>谁决定步骤</td><td>用户一步步问</td><td>开发者预先写死</td><td>LLM 动态决定</td></tr>
     <tr><td>能否用工具</td><td>通常不能</td><td>能（固定编排）</td><td>能（自主选择）</td></tr>
     <tr><td>适合的任务</td><td>问答、闲聊</td><td>步骤固定的批量任务</td><td>目标明确但路径不确定的任务</td></tr>
     <tr><td>可控性 / 成本</td><td>高 / 低</td><td>高 / 中</td><td>较低 / 较高</td></tr>
+    <tr><td>典型失败模式</td><td>答非所问</td><td>遇到意外输入就崩</td><td>循环空转 / 幻觉累积</td></tr>
   </table>
-  <h3>容易混淆的点</h3>
+
+  <h3>常见误解清单</h3>
   <ul>
-    <li><b>"接了插件的对话助手就是 Agent 吗？"</b> 不一定。若模型只能在你每次提问时被动调一个工具然后回答，仍偏 Assistant；Agent 的标志是<b>自主多步循环</b>。</li>
-    <li><b>"Agent 比 Workflow 高级，所以都要用 Agent？"</b> 不是。Anthropic 的工程博客明确建议：能用固定工作流解决的任务（如固定格式转换），用 Workflow 更稳定、更便宜、更好调试。</li>
+    <li><b>误解</b>："接了插件的对话助手就是 Agent" → <b>正确</b>：若模型只能在你每次提问时被动调一个工具然后回答，仍是 Assistant；Agent 的标志是<b>自主多步循环</b>。</li>
+    <li><b>误解</b>："Agent 比 Workflow 高级，所以都要用 Agent" → <b>正确</b>：能用固定工作流解决的任务（如固定格式转换），用 Workflow 更稳定、更便宜、更好调试。</li>
+    <li><b>误解</b>："Agent 可以无人监管全自动" → <b>正确</b>：高风险操作必须加护栏；多步循环里幻觉会累积，关键事实仍需人工复核。</li>
+    <li><b>误解</b>："Agent 越复杂越聪明越好" → <b>正确</b>：过度复杂的 Agent 反而更难调试；任务匹配度比模型聪明度更关键。</li>
   </ul>
-  <div class="warnbox"><b>使用边界（什么时候不该用）</b>：
-  ① 高风险操作（删库、对外发消息、花钱）必须加确认护栏，不能放任自主循环；② 幻觉会沿循环累积，多步任务错误率高于单轮问答，关键事实要人工复核；③ 长任务 token 成本高，简单任务用 Agent 是杀鸡用牛刀；④ 无限循环失控风险，需要设置步数 / 时间上限。</div>
+
+  <h3>使用边界（什么时候不该用）</h3>
+  <div class="warnbox">
+    <ol>
+      <li><b>高风险操作</b>（删库、对外发消息、花钱）必须加确认护栏，不能放任自主循环；</li>
+      <li><b>幻觉会沿循环累积</b>，多步任务错误率高于单轮问答，关键事实要人工复核；</li>
+      <li><b>长任务 token 成本高</b>，简单任务用 Agent 是杀鸡用牛刀；</li>
+      <li><b>无限循环失控风险</b>，需要设置步数 / 时间上限。</li>
+    </ol>
+  </div>
 </section>
 
 <section>
-  <h2><span class="no">7</span>自测问题</h2>
-  <details><summary>1.（判断）只要 AI 应用接入了搜索工具，它就是 Agent。</summary>
-  <p><b>答：错。</b>判断标准是"自主规划 + 循环执行 + 调用工具"三者齐备。被动地在你提问时调用一次工具、不拆解任务不循环的，只是带工具的助手。</p></details>
-  <details><summary>2.（简答）Agent Loop 中"观察结果"这一步为什么重要？</summary>
-  <p><b>答：</b>工具返回的结果必须写回上下文，LLM 下一轮推理才能基于最新事实决策。没有这一步，Agent 就成了"闭着眼睛做事"，无法根据反馈自我修正。</p></details>
-  <details><summary>3.（简答）Workflow 和 Agent 的核心区别是什么？各举一个适合的任务。</summary>
-  <p><b>答：</b>Workflow 的步骤由开发者预先写死，Agent 的步骤由 LLM 动态决定。固定格式的周报生成适合 Workflow（稳定、便宜）；"帮我调研并写份综述"路径不确定，适合 Agent。</p></details>
-  <details><summary>4.（简答）Agent 的"记忆"和它的"上下文"是什么关系？</summary>
-  <p><b>答：</b>上下文相当于当前这轮推理能看到的工作记忆；跨轮次、超窗口的长期记忆需要存到外部（文件、数据库），需要时再取回放进上下文。长期记忆本身不参与推理，只有进入上下文的部分才生效。</p></details>
-  <details><summary>5.（简答）举两条使用 Agent 时的必要护栏，并说明原因。</summary>
-  <p><b>答：</b>① 高风险操作前人工确认（防误删、防对外发布错误内容）；② 设置最大循环步数 / 超时（防死循环烧 token）；③ 关键事实人工复核（防幻觉多步累积）——任答两条即可。</p></details>
+  <h2><span class="no">7</span>自测问题（5 题：3 单选 + 2 简答）</h2>
+
+  <details><summary><b>1.（单选）</b>下列哪一项最能决定一个 AI 应用"是不是 Agent"？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>B</b>。三件事齐备才是 Agent，少一件都只是普通助手或工具。</p>
+    <p><span class="lbl feedback">答错反馈：</span>你可能误选 A（"接了工具"），因为很多对话助手都能上网搜索；但这只是"能调用工具"，没有"主动规划"和"循环执行"。也常见误选 C（"会用 LLM"），但所有 AI 应用几乎都用 LLM，这并不能区分 Agent。判断 Agent 的标志是<b>自主多步循环</b>。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 3「关键特征」+ 板块 4「Agent Loop 的运转逻辑」——感知→思考→行动→观察，缺一不可。</p>
+  </div></details>
+
+  <details><summary><b>2.（单选）</b>Agent Loop 中"观察结果"这一步最不可省略的原因是？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>C</b>。工具结果必须写回上下文，LLM 下一轮才能基于事实决策。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"循环才连贯"）只对了一半，没有观察也能循环，只是循环是闭着眼睛做的。B（"生成最终答案"）把观察当成结束步骤，理解反了——观察发生在每一步之后，是输入不是输出。正确理解：观察是给下一次"思考"喂数据的关键动作。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4「Agent Loop 的运转逻辑」第 4 步 + 板块 5 时序图里 <code>-->>A: 返回结果</code> 后接 <code>A->>L: 下一步行动</code> 的回路。</p>
+  </div></details>
+
+  <details><summary><b>3.（单选）</b>哪种任务最适合用 Agent 而不是 Workflow？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>B</b>。目标明确但路径不确定，正是 Agent 的强项。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"每周生成固定格式周报"）步骤完全固定，Workflow 更合适。C（"把 Excel 转 CSV"）连工具都不需要 Agent 来调度。D（"实时翻译"）追求速度和确定性，应该用 Workflow 或专门 API。判断要点：<b>步骤是否需要 LLM 动态决定</b>。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 6 易混淆对比表"适合的任务"一行 + 使用边界第 3 条（简单任务用 Agent 是杀鸡用牛刀）。</p>
+  </div></details>
+
+  <details><summary><b>4.（简答）</b>Agent 的"长期记忆"和"短期上下文"是什么关系？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span>上下文相当于当前这轮推理能看到的"工作台"；跨轮次、超窗口的长期记忆需要存到外部（文件、数据库），需要时再取回放进上下文。<b>长期记忆本身不参与推理，只有进入上下文的部分才生效</b>——"喂进上下文，知识才生效"。</p>
+    <p><span class="lbl feedback">常见漏答：</span>① 把"长期记忆"等同于"训练时学到的知识"——其实训练知识固化在参数里，与本话题的运行时记忆是两回事；② 忘记点出"长期记忆不直接参与推理"这层限制。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4 表格「上下文与记忆」一行；详细讨论见 <a href="llm-context.html">llm-context.html</a>。</p>
+  </div></details>
+
+  <details><summary><b>5.（简答）</b>举两条 Agent 的必要护栏，并各说明原因。</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span>任答两条即可，参考：</p>
+    <ol>
+      <li><b>高风险操作前人工确认</b>——防 Agent 自主循环误删库、误发消息、误付款；</li>
+      <li><b>设置最大循环步数 / 超时</b>——防死循环烧光 token；</li>
+      <li><b>关键事实人工复核</b>——防幻觉沿多步累积。</li>
+    </ol>
+    <p><span class="lbl feedback">常见漏答：</span>① 只答"加护栏"而不说具体动作——护栏必须可执行（确认按钮 / 步数上限 / 抽样审核），不是空话；② 把"护栏"和"测试"混为一谈——护栏是运行时拦截，测试是发布前验证。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 6「使用边界」全部 4 条 + 板块 6「常见误解清单」第 3 条。</p>
+  </div></details>
 </section>
 
 <section>
-  <h2><span class="no">8</span>参考来源</h2>
-  <div class="src"><b>① Anthropic 官方工程博客《Building Effective Agents》</b>
+  <h2><span class="no">8</span>参考来源（仅官方）</h2>
+  <div class="src"><b>① Anthropic 官方工程博客《Building Effective Agents》（engineering 子站，官方一手）</b>
     <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a>
-    <span class="meta">访问日期：2026-09-03 · 支撑内容：Workflow 与 Agent 的区分、Agent 适用性建议（第 4、6 板块）</span></div>
-  <div class="src"><b>② Lilian Weng《LLM Powered Autonomous Agents》</b>
-    <a href="https://lilianweng.github.io/posts/2023-06-23-agent/">https://lilianweng.github.io/posts/2023-06-23-agent/</a>
-    <span class="meta">访问日期：2026-09-03 · 支撑内容：Agent 四大组成（规划 / 记忆 / 工具）与 ReAct 循环（第 4 板块）</span></div>
-  <div class="src"><b>③ AWS 官方百科《What is an AI agent?》</b>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：Workflow 与 Agent 的区分、Agent 适用性建议（板块 4、6）</span></div>
+  <div class="src"><b>② AWS 官方百科《What is an AI agent?》（aws.amazon.com/what-is 系列，官方百科）</b>
     <a href="https://aws.amazon.com/what-is/ai-agents/">https://aws.amazon.com/what-is/ai-agents/</a>
-    <span class="meta">访问日期：2026-09-03 · 支撑内容：Agent 定义、感知—行动闭环的通俗表述（第 3、4 板块）</span></div>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：Agent 定义、感知—行动闭环的通俗表述（板块 3、4）</span></div>
+  <div class="src"><b>③ arXiv 论文 Lewis et al.《Retrieval-Augmented Generation for Knowledge-Intensive Tasks》（arXiv:2005.11401，经典论文页）</b>
+    <a href="https://arxiv.org/abs/2005.11401">https://arxiv.org/abs/2005.11401</a>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：广义 RAG 与 Agent 中"工具调用 + 知识检索"模式的学术渊源（板块 4 工具部分）</span></div>
 </section>
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>

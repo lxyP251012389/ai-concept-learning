@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>概念学习资料：大模型的上下文（Context）</title>
-<meta name="description" content="本文件含 Mermaid 可视化图表（CDN 引入），需联网渲染；离线时显示源代码而非空白">
+<meta name="description" content="本资料由 concept-learner Skill 生成。八板块结构，含 Mermaid 可视化（一次性 CDN，离线时显示源码），仅采用官方来源；遵循"通俗解释 + 类比 + 类比局限"的解释规范。">
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
-    --brand:#2563eb; --brand-bg:#eff6ff; --accent:#0e7490; --accent-bg:#ecfeff;
-    --warn:#b45309; --warn-bg:#fffbeb; --ok:#15803d; --ok-bg:#f0fdf4;
+    --brand:#2563eb; --brand-bg:#eff6ff; --brand-ink:#1e40af;
+    --warn:#b45309; --warn-bg:#fffbeb; --warn-ink:#92400e;
+    --neutral:#475569; --neutral-bg:#f1f5f9;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
     line-height:1.75;font-size:16px}
   .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
-  header{background:linear-gradient(135deg,#0e7490,#4338ca);color:#fff;border-radius:16px;
+  header{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border-radius:16px;
     padding:36px 32px;margin-bottom:28px}
   header .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
     border-radius:999px;padding:2px 14px;font-size:13px;letter-spacing:2px;margin-bottom:14px}
@@ -31,30 +32,38 @@
   ul,ol{padding-left:1.4em;margin:8px 0}
   li{margin:6px 0}
   table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
-  th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
+  th{background:var(--neutral-bg);text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
   td{padding:10px 12px;border:1px solid var(--line);vertical-align:top}
-  .note{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:8px;
+  .note{background:var(--brand-bg);border-left:4px solid var(--brand);border-radius:8px;
     padding:12px 16px;margin:14px 0;font-size:15px}
   .warnbox{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:8px;
     padding:12px 16px;margin:14px 0;font-size:15px}
-  .okbox{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:8px;
-    padding:12px 16px;margin:14px 0;font-size:15px}
+  .metabox{background:var(--neutral-bg);border-left:4px solid var(--neutral);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px;color:var(--ink)}
   details{background:#f8fafc;border:1px solid var(--line);border-radius:10px;
     padding:12px 16px;margin:10px 0}
   summary{cursor:pointer;font-weight:600;color:var(--brand)}
   details[open]{background:#fff}
+  details .ans-block{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+  details .ans-block .lbl{display:inline-block;font-size:12px;color:var(--muted);margin-right:6px}
+  details .ans-block .lbl.feedback{color:var(--warn)}
+  details .ans-block .lbl.ref{color:var(--neutral)}
   .src{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
     margin:10px 0;background:#fafafa;font-size:14.5px}
   .src b{display:block;margin-bottom:2px}
   .src .meta{color:var(--muted);font-size:13px}
   .src a{color:var(--brand);word-break:break-all}
   footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+  .tag{display:inline-block;background:var(--brand-bg);color:var(--brand);border-radius:6px;
+    padding:1px 8px;font-size:13px;margin:0 4px 4px 0}
   svg{max-width:100%;height:auto;display:block;margin:16px auto}
   .figure{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:18px 0}
   .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
   .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
   .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
-  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
+  .mermaid-legend{background:var(--neutral-bg);border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
+  code{background:var(--brand-bg);color:var(--brand-ink);border-radius:4px;padding:1px 6px;font-size:14px;
+    font-family:Consolas,"Courier New",monospace}
 </style>
 </head>
 <body>
@@ -63,60 +72,71 @@
 <header>
   <span class="badge">概念学习资料 · 02</span>
   <h1>大模型的上下文（Context）</h1>
-  <p>由 concept-learner Skill 生成 · 2026-09-03 · 学习深度：入门</p>
+  <p>由 concept-learner Skill 生成 · 2026-09-10 二次修订 · 学习深度：入门</p>
 </header>
 
 <section>
   <h2><span class="no">1</span>学习目标</h2>
   <ul>
-    <li>能说出"上下文"的准确含义，以及上下文窗口里通常装着哪几类内容</li>
-    <li>能区分模型的<strong>参数知识</strong>与<strong>上下文信息</strong>这两种"知识来源"</li>
-    <li>能解释上下文窗口为什么有限，以及超出后会发生什么（截断 / 压缩）</li>
-    <li>能说出"Lost in the Middle"现象及其对写提示词的启示</li>
-    <li>能解释上下文如何影响 Agent 的工作质量</li>
+    <li><b>能说出</b>"上下文"的准确含义，并区分上下文与训练数据这两种"知识来源"</li>
+    <li><b>能列出</b>上下文窗口里通常装载的几类内容（系统提示、对话历史、工具说明、检索资料、当前输入）</li>
+    <li><b>能解释</b>上下文窗口为什么有限、超出后会截断或压缩</li>
+    <li><b>能描述</b>"Lost in the Middle"现象及其对写提示词的启示</li>
+    <li><b>能说明</b>上下文如何影响 Agent 的工作质量（详见 <a href="agent.html" style="color:var(--brand)">agent.html</a>）</li>
   </ul>
 </section>
 
 <section>
   <h2><span class="no">2</span>核心问题</h2>
   <ol>
-    <li>为什么 AI 聊久了会"忘记"你开头提的要求——它不是每次都读全部对话吗？</li>
-    <li>同一个模型，为什么有的回答像"失忆"，有的却能引用你三天前发的文档？</li>
-    <li>"上下文"和"训练数据"都是模型的知识，它们到底有什么本质不同？</li>
+    <li><b>事实性</b>：上下文和训练数据都能让模型"知道"一些事，它们的本质区别是什么？</li>
+    <li><b>机制性</b>：为什么 AI 聊久了会"忘记"开头的要求，背后的工程机制是什么？</li>
+    <li><b>应用性</b>：同一台模型，为什么有时回答精准、却答非所问——差别到底来自模型本身还是上下文？</li>
   </ol>
 </section>
 
 <section>
-  <h2><span class="no">3</span>我的解释</h2>
-  <p>我的理解：<strong>上下文就是 AI 当前可以利用的信息</strong>——系统设定、之前的对话、能用的工具说明、你刚发来的资料和问题，全都在里面。模型这一次回答，只根据这些信息作答；不在这份信息里的东西，它一概"看不见"。</p>
-  <p>上下文有点像模型眼前的一张草稿纸：纸的尺寸（上下文窗口）有限，按 token 计数，写不下的内容会被裁掉或压缩。它最重要的价值，是给模型提供了参数里没有的"现场信息"——今天的日期、你的作业要求、刚检索到的网页。同一个模型有时表现好有时表现差，往往不是它聪明程度变了，而是它"眼前能看到的信息"变了。</p>
+  <h2><span class="no">3</span>通俗解释</h2>
+  <p><b>一句话定义</b>：上下文是大模型在本次回答时能够看见的全部信息，包括系统设定、对话历史、工具说明、检索到的资料和当前用户输入。</p>
+
+  <p><b>类比</b>：可以把它理解为模型眼前的"草稿纸"——纸上写什么，模型才能据此作答；纸外的内容，对它而言不存在。同一台模型配上不同草稿纸，表现可能天差地别。</p>
+
+  <p><b>类比的局限</b>：把上下文比作"草稿纸"会让人误以为内容可以随时擦写。实际上每轮推理时，上下文是整体重新输入的——历史对话会原样重新送一遍，token 成本按每次全部内容累加，所以长对话越聊越贵、越聊越慢。</p>
+
+  <p><b>关键特征</b>：</p>
+  <ul>
+    <li><b>有限性</b>：窗口有上限，按 token 计数（中文 1 字≈1.5 token），超出后截断或压缩</li>
+    <li><b>现场性</b>：上下文承载的是"当下这一刻"的信息，可包含模型参数里没有的最新内容</li>
+    <li><b>位置敏感</b>：模型对开头和结尾的信息利用率高，中间部分易被忽略（Lost in the Middle）</li>
+    <li><b>决定输出</b>：上下文之外的世界，对模型而言不存在；质量决定输出质量</li>
+  </ul>
 </section>
 
 <section>
   <h2><span class="no">4</span>核心机制 / 组成</h2>
 
-  <svg viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="上下文窗口构成示意图">
-    <rect x="120" y="16" width="440" height="298" rx="14" fill="#ffffff" stroke="#4338ca" stroke-width="2"/>
-    <rect x="120" y="16" width="440" height="34" rx="14" fill="#eef2ff"/>
-    <text x="340" y="39" text-anchor="middle" font-size="15" fill="#3730a3">上下文窗口（有限，按 token 计）</text>
-    <rect x="140" y="62" width="400" height="46" rx="8" fill="#eff6ff" stroke="#2563eb"/>
-    <text x="340" y="90" text-anchor="middle" font-size="14" fill="#1e40af">系统提示（角色设定、规则）</text>
-    <rect x="140" y="116" width="400" height="46" rx="8" fill="#ecfeff" stroke="#0e7490"/>
-    <text x="340" y="144" text-anchor="middle" font-size="14" fill="#0e7490">对话历史（多轮问答累积）</text>
-    <rect x="140" y="170" width="400" height="46" rx="8" fill="#f0fdf4" stroke="#15803d"/>
-    <text x="340" y="198" text-anchor="middle" font-size="14" fill="#15803d">工具 / Skill 定义说明</text>
-    <rect x="140" y="224" width="400" height="46" rx="8" fill="#fffbeb" stroke="#b45309"/>
-    <text x="340" y="252" text-anchor="middle" font-size="14" fill="#b45309">检索到的资料（文档、网页内容）</text>
-    <rect x="140" y="278" width="400" height="30" rx="8" fill="#fdf2f8" stroke="#be185d"/>
-    <text x="340" y="298" text-anchor="middle" font-size="14" fill="#be185d">当前输入</text>
-    <text x="590" y="120" font-size="13" fill="#6b7280">↑ 旧内容可能</text>
-    <text x="590" y="138" font-size="13" fill="#6b7280">被截断/压缩</text>
+  <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="上下文窗口构成示意图">
+    <rect x="120" y="16" width="440" height="268" rx="14" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+    <rect x="120" y="16" width="440" height="34" rx="14" fill="#f1f5f9"/>
+    <text x="340" y="39" text-anchor="middle" font-size="15" fill="#475569">上下文窗口（有限，按 token 计）</text>
+    <rect x="140" y="62" width="400" height="40" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="340" y="88" text-anchor="middle" font-size="14" fill="#1e40af">系统提示（角色设定、规则）</text>
+    <rect x="140" y="110" width="400" height="40" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="340" y="136" text-anchor="middle" font-size="14" fill="#1e40af">对话历史（多轮问答累积）</text>
+    <rect x="140" y="158" width="400" height="40" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="340" y="184" text-anchor="middle" font-size="14" fill="#1e40af">工具 / Skill 定义说明</text>
+    <rect x="140" y="206" width="400" height="40" rx="8" fill="#fffbeb" stroke="#b45309"/>
+    <text x="340" y="232" text-anchor="middle" font-size="14" fill="#b45309">检索到的资料（文档、网页）</text>
+    <rect x="140" y="254" width="400" height="22" rx="8" fill="#f1f5f9" stroke="#475569"/>
+    <text x="340" y="270" text-anchor="middle" font-size="14" fill="#475569">当前输入</text>
+    <text x="590" y="100" font-size="13" fill="#475569">↑ 旧内容可能</text>
+    <text x="590" y="118" font-size="13" fill="#475569">被截断 / 压缩</text>
   </svg>
 
   <h3>三种"知识来源"的对比</h3>
   <table>
     <tr><th>维度</th><th>参数知识（训练）</th><th>上下文（本次窗口）</th><th>外部记忆（RAG / 文件）</th></tr>
-    <tr><td>类比</td><td>长期记忆（背下来的书）</td><td>短期工作记忆（眼前的草稿纸）</td><td>图书馆（要用才去查）</td></tr>
+    <tr><td>类比</td><td>长期记忆（背下来的书）</td><td>短期工作记忆（眼前草稿纸）</td><td>图书馆（要用才去查）</td></tr>
     <tr><td>更新方式</td><td>重新训练 / 微调，慢且贵</td><td>每次对话即时更新</td><td>随时增删，与模型无关</td></tr>
     <tr><td>时效性</td><td>止步于训练截止日</td><td>实时（可含刚检索的内容）</td><td>实时</td></tr>
     <tr><td>容量</td><td>极大（固化在参数里）</td><td>有限（几 K～1M token）</td><td>无限，按需取用</td></tr>
@@ -124,12 +144,12 @@
 
   <h3>关键现象与机制</h3>
   <ul>
-    <li><b>窗口有限，按 token 计</b>：不同模型窗口从几千到上百万 token 不等；中文一个汉字通常约 1～2 个 token，1 万字对话≈1.5 万 token 起。</li>
-    <li><b>超出窗口怎么办</b>：要么<strong>截断</strong>（丢掉最旧的内容——这就是"聊久了忘记开头"的原因），要么<strong>压缩/摘要</strong>（把早期对话总结成一段塞回去，省空间但有损）。</li>
+    <li><b>窗口有限，按 token 计</b>：不同模型窗口从几千到上百万 token 不等；中文 1 字通常约 1.5 token，1 万字对话≈1.5 万 token 起。</li>
+    <li><b>超出窗口怎么办</b>：要么<b>截断</b>（丢掉最旧的内容——这就是"聊久了忘记开头"的原因），要么<b>压缩/摘要</b>（把早期对话总结成一段塞回去，省空间但有损）。</li>
     <li><b>Lost in the Middle</b>：研究发现模型对开头和结尾的信息记得最牢，塞在中间的内容容易被忽略。写提示词时应把最重要的要求和资料放在开头或结尾。</li>
     <li><b>注意力机制</b>：模型通过注意力对窗口内所有 token 建立关联——上下文里的每一段文字都在互相"竞争"注意力，无关内容越多，关键信息被稀释得越厉害。</li>
   </ul>
-  <div class="note"><b>类比的局限</b>：把上下文比作"草稿纸"会让人以为信息可以随便擦写。实际上每轮推理时上下文是整体重建的（历史对话会原样重新输入一遍），"擦掉"只是不再携带，而 token 成本是按每次全部输入计算的——所以长对话越聊越贵、越慢。</div>
+  <div class="note"><b>类比的局限（细化）</b>：把上下文比作"草稿纸"会让人以为信息可以随时擦写。实际上每轮推理时上下文是整体重新输入的（历史对话会原样重新送一遍），"擦掉"只是不再携带，而 token 成本按每次全部输入累加——所以长对话越聊越贵、越慢。</div>
 </section>
 
 <section>
@@ -152,17 +172,19 @@
     <div class="mermaid-legend"><b>图读法</b>：注意 <code>Note over A,C</code> 那段——上下文（不是模型本身）才是这次推理的"工作台"：报告全文 1.2 万 token + 指令 30 token，模型"眼前能看到"的就这么多。如果报告再长一些（比如 5 万字），超过了模型窗口，就得靠 <a href="rag.html" style="color:var(--brand)">RAG 分段送入</a> 或先做摘要，否则模型会"看不到"开头的内容，<b>Lost in the Middle</b> 效应会让它忘掉最早的要求。</div>
   </div>
   <ol>
-    <li>你把报告全文粘贴进对话框，附一句"帮我把第二部分改得更学术一点"——报告全文 + 指令此刻全部进入了<strong>上下文</strong>；</li>
+    <li>你把报告全文粘贴进对话框，附一句"帮我把第二部分改得更学术一点"——报告全文 + 指令此刻全部进入了<b>上下文</b>；</li>
     <li>AI 能精准改写，因为它"眼前"能看到全文（这比它参数里的任何写作知识都关键）；</li>
     <li>接着你连续问了十几个别的问题，对话越滚越长；</li>
-    <li>你再问"刚才报告第三段的结论帮我也润色一下"——此时报告全文可能已被挤<strong>出窗口</strong>（被截断或压缩），AI 开始答非所问，甚至一本正经地"编"出第三段内容（幻觉）；</li>
+    <li>你再问"刚才报告第三段的结论帮我也润色一下"——此时报告全文可能已被挤<b>出窗口</b>（被截断或压缩），AI 开始答非所问，甚至一本正经地"编"出第三段内容（幻觉）；</li>
     <li><b>正确姿势</b>：开一个新对话重新贴原文，或使用支持文件挂载 / 记忆检索的工具，让系统在需要时把原文重新取回放进上下文。</li>
   </ol>
-  <p>这个场景说明：<strong>同一台模型，上下文组织得好坏直接决定输出质量</strong>——模型没变，变的是它"眼前能看到什么"。</p>
+  <p>这个场景说明：<b>同一台模型，上下文组织得好坏直接决定输出质量</b>——模型没变，变的是它"眼前能看到什么"。</p>
 </section>
 
 <section>
-  <h2><span class="no">6</span>概念辨析与使用边界</h2>
+  <h2><span class="no">6</span>概念辨析（易混淆 + 使用边界）</h2>
+
+  <h3>易混淆对比表</h3>
   <table>
     <tr><th>易混概念</th><th>区别一句话</th></tr>
     <tr><td><b>上下文 vs 训练数据</b></td><td>训练数据在训练时固化进参数、回答时不可见；上下文是回答这一刻摆在眼前的现场信息</td></tr>
@@ -170,39 +192,74 @@
     <tr><td><b>RAG vs 微调</b></td><td>RAG 是"考试前把资料带进考场"（进上下文）；微调是"考前把资料背进脑子"（进参数）。前者即时、可撤；后者持久、昂贵</td></tr>
     <tr><td><b>上下文 vs 记忆功能</b></td><td>很多产品的"记忆"是外挂系统：把要点存进数据库，下次对话自动取回、再注入上下文——窗口内仍是当下这一次</td></tr>
   </table>
-  <h3>常见误解与使用边界</h3>
+
+  <h3>常见误解清单</h3>
   <ul>
-    <li><b>误解："窗口 128K，我塞 10 万字它就全能记住。"</b> 记得进 ≠ 记得牢：中间内容容易被忽略（Lost in the Middle），关键信息要放开头/结尾。</li>
-    <li><b>误解："上下文长 = 模型聪明。"</b> 窗口只是"能看多少"，推理能力由模型本身决定；长窗口塞满噪声反而稀释注意力、降低表现。</li>
+    <li><b>误解</b>："窗口 128K，我塞 10 万字它就全能记住。" → <b>正确</b>：记得进 ≠ 记得牢。中间内容容易被忽略（Lost in the Middle），关键信息要放开头/结尾。</li>
+    <li><b>误解</b>："上下文长 = 模型聪明。" → <b>正确</b>：窗口只是"能看多少"，推理能力由模型本身决定；长窗口塞满噪声反而稀释注意力、降低表现。</li>
+    <li><b>误解</b>："给上下文越多越好。" → <b>正确</b>：垃圾进、垃圾出——无关内容会挤掉关键信息的注意力配额。</li>
   </ul>
-  <div class="warnbox"><b>使用边界</b>：① 长文档优先"按需检索注入"，而不是整包塞入；② 多轮长任务要主动开新会话或做摘要压缩；③ 涉及精确引用的内容（数据、条款、代码）尽量重贴原文，不要依赖模型对早期上下文的"记忆"。</div>
+
+  <h3>使用边界（什么时候不该过度依赖）</h3>
+  <div class="warnbox">
+    <ol>
+      <li><b>长文档应"按需检索注入"</b>，而不是整包塞入（参考 <a href="rag.html" style="color:var(--brand-ink)">rag.html</a> 的 RAG 思路）；</li>
+      <li><b>多轮长任务要主动开新会话</b>，或做摘要压缩，避免早期指令被截断；</li>
+      <li><b>涉及精确引用的内容</b>（数据、条款、代码）尽量重贴原文，不要依赖模型对早期上下文的"记忆"。</li>
+    </ol>
+  </div>
 </section>
 
 <section>
-  <h2><span class="no">7</span>自测问题</h2>
-  <details><summary>1.（简答）上下文窗口里通常装着哪几类内容？</summary>
-  <p><b>答：</b>系统提示、对话历史、工具/Skill 定义说明、检索到的外部资料、当前输入（五类，见第 4 板块示意图）。</p></details>
-  <details><summary>2.（简答）为什么 AI 聊久了会忘记你最初提的要求？</summary>
-  <p><b>答：</b>对话持续累积，总 token 超出上下文窗口上限后，系统会截断或压缩最早的内容，最初的要求可能已被丢弃或摘要得面目全非。</p></details>
-  <details><summary>3.（简答）参数知识和上下文信息有什么本质区别？各举一例。</summary>
-  <p><b>答：</b>参数知识是训练时固化进模型权重的长期知识（如"Python 的语法"），推理时只读不写；上下文是本次对话现场提供的信息（如"你刚贴的报告原文"），每次对话重新构建、可即时增删。</p></details>
-  <details><summary>4.（简答）Lost in the Middle 现象是什么？对写提示词有什么启示？</summary>
-  <p><b>答：</b>模型对窗口开头与结尾的信息利用率高，中间部分容易被忽略。启示：核心指令和关键资料放在开头或结尾，长资料中间不放关键信息；无关内容尽量精简，避免稀释注意力。</p></details>
-  <details><summary>5.（选择）想让 AI 准确回答你公司内部文档的问题，最合适的做法是？<br>A. 微调模型　B. 把文档检索后注入上下文（RAG）　C. 换更大的模型　D. 多问几遍</summary>
-  <p><b>答：B。</b>内部文档属于模型参数里没有的实时信息，按需检索注入上下文即可即时生效；微调昂贵且更新慢，换模型解决不了"没见过这份文档"的问题。</p></details>
+  <h2><span class="no">7</span>自测问题（5 题：3 单选 + 2 简答）</h2>
+
+  <details><summary><b>1.（单选）</b>下列关于上下文的描述，哪一项最准确？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>B</b>。上下文是本次回答时模型能够看见的全部信息；训练数据虽影响模型能力，但回答时不可见。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"永久保存在模型里"）混淆了上下文与训练数据。C（"等于大模型的数据库"）把"本次看见"误解为"永久存储"。D（"在 GPU 显存里"）是工程实现细节，但与"概念"层面的定义不同——上下文是一段文本，不是物理位置。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 3「通俗解释」一句话定义 + 板块 4「三种知识来源的对比表」。</p>
+  </div></details>
+
+  <details><summary><b>2.（单选）</b>AI 聊久了"忘记"你最初提的要求，最主要的原因是？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>C</b>。对话累积导致上下文窗口溢出，最早的内容被截断或压缩。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"模型被关闭重启"）混淆了"上下文"与"模型本身"——模型本身没变，只是它"眼前看不见"了。B（"训练时未学到"）混淆了参数知识与上下文——再普通的常识在上下文里也能被记住，问题是它得还在窗口里。D（"系统主动删除"）不准确，是"被动截断"而不是"主动删除"。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4「超出窗口怎么办」+ 板块 5「应用场景」步骤 4。</p>
+  </div></details>
+
+  <details><summary><b>3.（单选）</b>想让 AI 准确回答公司内部文档的问题，最合适的做法是？<br>A. 微调模型　B. 把文档检索后注入上下文（RAG）　C. 换更大的模型　D. 多问几遍</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>B</b>。内部文档是模型参数里没有的实时信息，检索注入上下文即可即时生效。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"微调"）成本高、更新慢，且效果不如 RAG 灵活——RAG 可以即时增删资料，微调要重训。C（"换更大模型"）解决不了"没见过这份文档"的问题。D（"多问几遍"）只是重复同一份无知的回答。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4「三种知识来源的对比表」"外部记忆"行 + 板块 6 易混淆表中"RAG vs 微调"行。</p>
+  </div></details>
+
+  <details><summary><b>4.（简答）</b>"Lost in the Middle"现象是什么？对写提示词有什么具体启示？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span>模型对上下文窗口开头与结尾的信息记最牢，中间部分容易被忽略。启示：核心指令和关键资料放在<b>开头或结尾</b>；长资料中间不要塞关键信息；无关内容尽量精简，避免稀释注意力。</p>
+    <p><span class="lbl feedback">常见漏答：</span>① 只回答现象本身，没提到"启示"——题目要的是工程含义；② 把现象归因于"窗口太小"——其实是位置效应，与容量无直接关系。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4「关键现象与机制」第 3 条 + 板块 6 常见误解第 1 条。</p>
+  </div></details>
+
+  <details><summary><b>5.（简答）</b>参数知识和上下文信息有什么本质区别？各举一个典型例子。</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span>参数知识是训练时固化进模型权重的<b>长期</b>知识（如"Python 语法"），推理时只读不写；上下文是本次对话现场提供的<b>临时</b>信息（如"你刚贴的报告原文"），每次对话重新构建、可即时增删。</p>
+    <p><span class="lbl feedback">常见漏答：</span>① 把"训练数据"等同于"上下文"——训练数据进入参数后已不可单独取出来看；② 没给出具体例子——例子能让答案显得具体而非抽象。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 3「关键特征」+ 板块 4「三种知识来源的对比表」第一/二行。</p>
+  </div></details>
 </section>
 
 <section>
-  <h2><span class="no">8</span>参考来源</h2>
-  <div class="src"><b>① IBM Technology《What is an LLM context window?》</b>
-    <a href="https://www.ibm.com/think/topics/llm-context-window">https://www.ibm.com/think/topics/llm-context-window</a>
-    <span class="meta">访问日期：2026-09-03 · 支撑内容：上下文窗口定义、token 计量、窗口有限性（第 3、4 板块）</span></div>
-  <div class="src"><b>② Microsoft Learn《Prompt engineering techniques》</b>
+  <h2><span class="no">8</span>参考来源（仅官方）</h2>
+  <div class="src"><b>① Microsoft Learn 官方文档《Prompt engineering techniques》（微软 Azure AI 服务官方文档）</b>
     <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering">https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering</a>
-    <span class="meta">访问日期：2026-09-03 · 支撑内容：系统消息与用户消息的构成、上下文组织对效果的影响（第 4、5 板块）</span></div>
-  <div class="src"><b>③ Liu et al.《Lost in the Middle: How Language Models Use Long Contexts》（arXiv:2307.03172）</b>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：系统提示与用户消息的构成、上下文组织对效果的影响（板块 4、5）</span></div>
+  <div class="src"><b>② NVIDIA 官方词条《What is a Context Window?》（nvidia.com/glossary 官方百科）</b>
+    <a href="https://www.nvidia.com/en-us/glossary/context-window/">https://www.nvidia.com/en-us/glossary/context-window/</a>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：上下文窗口定义、token 计量、有限性（板块 3、4）</span></div>
+  <div class="src"><b>③ Liu et al.《Lost in the Middle: How Language Models Use Long Contexts》（arXiv:2307.03172，经典学术论文）</b>
     <a href="https://arxiv.org/abs/2307.03172">https://arxiv.org/abs/2307.03172</a>
-    <span class="meta">访问日期：2026-09-03 · 支撑内容：中间位置信息利用率低的实验结论（第 4 板块、第 6 板块启示）</span></div>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：中间位置信息利用率低的实验结论（板块 4 现象、板块 6 启示）</span></div>
 </section>
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>

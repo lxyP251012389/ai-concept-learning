@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>概念学习资料：RAG（检索增强生成）</title>
-<meta name="description" content="本文件含 Mermaid 可视化图表（CDN 引入），需联网渲染；离线时显示源代码而非空白">
+<meta name="description" content="本资料由 concept-learner Skill 生成。八板块结构，含 Mermaid 可视化（一次性 CDN，离线时显示源码），仅采用官方来源；遵循"通俗解释 + 类比 + 类比局限"的解释规范。">
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
-    --brand:#2563eb; --brand-bg:#eff6ff; --accent:#0e7490; --accent-bg:#ecfeff;
-    --warn:#b45309; --warn-bg:#fffbeb; --ok:#15803d; --ok-bg:#f0fdf4;
+    --brand:#2563eb; --brand-bg:#eff6ff; --brand-ink:#1e40af;
+    --warn:#b45309; --warn-bg:#fffbeb; --warn-ink:#92400e;
+    --neutral:#475569; --neutral-bg:#f1f5f9;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
     line-height:1.75;font-size:16px}
   .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
-  header{background:linear-gradient(135deg,#b45309,#15803d);color:#fff;border-radius:16px;
+  header{background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border-radius:16px;
     padding:36px 32px;margin-bottom:28px}
   header .badge{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
     border-radius:999px;padding:2px 14px;font-size:13px;letter-spacing:2px;margin-bottom:14px}
@@ -31,32 +32,38 @@
   ul,ol{padding-left:1.4em;margin:8px 0}
   li{margin:6px 0}
   table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
-  th{background:#f1f5f9;text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
+  th{background:var(--neutral-bg);text-align:left;padding:10px 12px;border:1px solid var(--line);font-weight:600}
   td{padding:10px 12px;border:1px solid var(--line);vertical-align:top}
-  .note{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:8px;
+  .note{background:var(--brand-bg);border-left:4px solid var(--brand);border-radius:8px;
     padding:12px 16px;margin:14px 0;font-size:15px}
   .warnbox{background:var(--warn-bg);border-left:4px solid var(--warn);border-radius:8px;
     padding:12px 16px;margin:14px 0;font-size:15px}
-  .okbox{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:8px;
-    padding:12px 16px;margin:14px 0;font-size:15px}
+  .metabox{background:var(--neutral-bg);border-left:4px solid var(--neutral);border-radius:8px;
+    padding:12px 16px;margin:14px 0;font-size:15px;color:var(--ink)}
   details{background:#f8fafc;border:1px solid var(--line);border-radius:10px;
     padding:12px 16px;margin:10px 0}
   summary{cursor:pointer;font-weight:600;color:var(--brand)}
   details[open]{background:#fff}
+  details .ans-block{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+  details .ans-block .lbl{display:inline-block;font-size:12px;color:var(--muted);margin-right:6px}
+  details .ans-block .lbl.feedback{color:var(--warn)}
+  details .ans-block .lbl.ref{color:var(--neutral)}
   .src{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
     margin:10px 0;background:#fafafa;font-size:14.5px}
   .src b{display:block;margin-bottom:2px}
   .src .meta{color:var(--muted);font-size:13px}
   .src a{color:var(--brand);word-break:break-all}
   footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+  .tag{display:inline-block;background:var(--brand-bg);color:var(--brand);border-radius:6px;
+    padding:1px 8px;font-size:13px;margin:0 4px 4px 0}
   svg{max-width:100%;height:auto;display:block;margin:16px auto}
-  code{background:#eff6ff;color:#1d4ed8;border-radius:4px;padding:1px 6px;font-size:14px;
-    font-family:Consolas,"Courier New",monospace}
   .figure{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:18px 0}
   .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
   .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
   .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
-  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
+  .mermaid-legend{background:var(--neutral-bg);border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
+  code{background:var(--brand-bg);color:var(--brand-ink);border-radius:4px;padding:1px 6px;font-size:14px;
+    font-family:Consolas,"Courier New",monospace}
 </style>
 </head>
 <body>
@@ -65,33 +72,44 @@
 <header>
   <span class="badge">概念学习资料 · 04 · 由 concept-learner 生成</span>
   <h1>RAG（检索增强生成，Retrieval-Augmented Generation）</h1>
-  <p>由 concept-learner Skill 生成 · 2026-09-04 · 学习深度：入门</p>
+  <p>由 concept-learner Skill 生成 · 2026-09-10 二次修订 · 学习深度：入门</p>
 </header>
 
 <section>
   <h2><span class="no">1</span>学习目标</h2>
   <ul>
-    <li>能说出 RAG 的定义，并区分"普通 LLM 回答"和"基于外部知识库回答"的本质区别</li>
-    <li>能列出 RAG 的四步流程（提问 → 检索 → 拼接 → 生成）并解释每一步在解决什么问题</li>
-    <li>能解释 RAG 与微调、与大模型上下文、与传统搜索引擎的关系与差异</li>
-    <li>能举一个 RAG 的具体应用场景（课程 / 工作中），并说明它解决了什么痛点</li>
-    <li>能说出 RAG 的三条使用边界（什么时候它帮不上忙 / 用 RAG 比直接问 LLM 更糟）</li>
+    <li><b>能说出</b>RAG 的定义，并区分"普通 LLM 回答"和"基于外部知识库回答"的本质区别</li>
+    <li><b>能列出</b>RAG 的四步流程（提问 → 检索 → 拼接 → 生成）并解释每一步在解决什么问题</li>
+    <li><b>能解释</b>RAG 与微调、与大模型上下文（<a href="llm-context.html" style="color:var(--brand)">llm-context.html</a>）、与传统搜索引擎的关系与差异</li>
+    <li><b>能举出</b>一个 RAG 的具体应用场景（课程 / 工作中），并说明它解决了什么痛点</li>
+    <li><b>能说出</b>RAG 的三条使用边界（什么时候它帮不上忙 / 用 RAG 比直接问 LLM 更糟）</li>
   </ul>
 </section>
 
 <section>
   <h2><span class="no">2</span>核心问题</h2>
   <ol>
-    <li>大模型参数里没有公司内部文档 / 今天的新闻 / 你那本课本，怎么让它的回答能用到这些"现场信息"？</li>
-    <li>为什么"把文档整个塞进上下文窗口"不总是好办法？RAG 跟那种"塞满窗口"的做法有什么本质区别？</li>
-    <li>RAG 和"用搜索引擎自己查资料再粘给 AI"看起来很像，它们的差别在哪？</li>
+    <li><b>现场性</b>：大模型参数里没有公司内部文档 / 今天的新闻 / 你那本课本，怎么让它的回答能用到这些"现场信息"？</li>
+    <li><b>边界性</b>：为什么"把文档整个塞进上下文窗口"不总是好办法？RAG 跟那种"塞满窗口"的做法有什么本质区别？</li>
+    <li><b>区别性</b>：RAG 和"用搜索引擎自己查资料再粘给 AI"看起来很像，它们的差别在哪？</li>
   </ol>
 </section>
 
 <section>
-  <h2><span class="no">3</span>我的解释</h2>
-  <p>我的理解：<strong>RAG = 让 LLM 在回答之前，先去"查资料"，再把查到的内容连同问题一起拼进上下文，最后才生成回答</strong>。它解决的问题特别直接——模型的参数知识停在训练截止日，对内部文档、私域知识、时效性内容一无所知；与其昂贵地微调或重训模型，不如在每次提问时"现查现用"。</p>
-  <p>举个身边的例子：老师让你写一篇关于"2026 年最新的大数据法规"的小论文。如果只用普通 AI 问，它会用训练截止日之前的旧信息糊弄你；用 RAG，系统会先去搜最新的法规数据库、把相关条款找出来，**把这些现场信息塞进上下文**，AI 才有依据写出当下正确的小论文。这就是"检索 → 增强上下文 → 生成"三步走的精髓——它补的就是之前学的"上下文"那一课的短板：上下文里没有的知识对模型等于不存在。</p>
+  <h2><span class="no">3</span>通俗解释</h2>
+  <p><b>一句话定义</b>：RAG（Retrieval-Augmented Generation）是一种让大模型在回答之前先去外部知识库"查资料"，再把查到的内容连同问题一起拼进上下文，最后才生成回答的工程模式。</p>
+
+  <p><b>类比</b>：可以把它理解为"开卷考试"——普通大模型是闭卷回答（只能凭参数里背下来的旧知识作答），RAG 则是先允许"翻书查资料"，再把找到的内容摆到桌上，最后综合写成答案。这正好补上了<a href="llm-context.html" style="color:var(--brand)">「上下文」</a>那一课的短板：上下文里没有的知识对模型等于不存在。</p>
+
+  <p><b>类比的局限</b>：把 RAG 比作"开卷考试"形象但会让人忽视 RAG 的两大真实难点——<b>检索质量</b>（搜不到对的资料，模型给再多上下文也没用）和<b>上下文组织</b>（检索结果太长会冲淡关键信息，呼应上下文里的 Lost in the Middle 现象）。</p>
+
+  <p><b>关键特征</b>：</p>
+  <ul>
+    <li><b>知识外置</b>：把模型参数里没有的知识放在外部知识库，更新只需重建索引、不必重训模型</li>
+    <li><b>按需检索</b>：每次只把和问题相关的片段送进上下文，避免塞入整本文档</li>
+    <li><b>可追溯</b>：答案中的事实可附带引用编号，能反查到原始资料来源</li>
+    <li><b>检索 + 生成两步</b>：检索找到"答案的素材"，生成负责整合表述——这是与传统搜索最本质的区别</li>
+  </ul>
 </section>
 
 <section>
@@ -100,31 +118,31 @@
   <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RAG 四步流程示意图">
     <defs>
       <marker id="rg1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-        <path d="M0,0 L8,3 L0,6 Z" fill="#b45309"/>
+        <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
       </marker>
     </defs>
-    <rect x="20" y="80" width="130" height="80" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
-    <text x="85" y="112" text-anchor="middle" font-size="15" fill="#b45309">① 用户问题</text>
-    <text x="85" y="134" text-anchor="middle" font-size="12" fill="#92400e">"最新法规是？"</text>
+    <rect x="20" y="80" width="130" height="80" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="85" y="112" text-anchor="middle" font-size="15" fill="#1e40af">① 用户问题</text>
+    <text x="85" y="134" text-anchor="middle" font-size="12" fill="#1e40af">"最新法规是？"</text>
 
-    <rect x="190" y="80" width="130" height="80" rx="12" fill="#ecfeff" stroke="#0e7490" stroke-width="2"/>
-    <text x="255" y="112" text-anchor="middle" font-size="15" fill="#0e7490">② 检索</text>
-    <text x="255" y="134" text-anchor="middle" font-size="12" fill="#155e75">向量库/搜索引擎</text>
+    <rect x="190" y="80" width="130" height="80" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="255" y="112" text-anchor="middle" font-size="15" fill="#1e40af">② 检索</text>
+    <text x="255" y="134" text-anchor="middle" font-size="12" fill="#1e40af">向量库/搜索引擎</text>
 
     <rect x="360" y="80" width="130" height="80" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
     <text x="425" y="112" text-anchor="middle" font-size="15" fill="#1e40af">③ 拼上下文</text>
-    <text x="425" y="134" text-anchor="middle" font-size="12" fill="#1e3a8a">问题+检索结果→LLM</text>
+    <text x="425" y="134" text-anchor="middle" font-size="12" fill="#1e40af">问题+检索结果→LLM</text>
 
-    <rect x="530" y="80" width="130" height="80" rx="12" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
-    <text x="595" y="112" text-anchor="middle" font-size="15" fill="#15803d">④ 生成回答</text>
-    <text x="595" y="134" text-anchor="middle" font-size="12" fill="#166534">基于现场依据作答</text>
+    <rect x="530" y="80" width="130" height="80" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text x="595" y="112" text-anchor="middle" font-size="15" fill="#b45309">④ 生成回答</text>
+    <text x="595" y="134" text-anchor="middle" font-size="12" fill="#b45309">基于现场依据作答</text>
 
-    <line x1="150" y1="120" x2="188" y2="120" stroke="#b45309" stroke-width="2" marker-end="url(#rg1)"/>
-    <line x1="320" y1="120" x2="358" y2="120" stroke="#b45309" stroke-width="2" marker-end="url(#rg1)"/>
-    <line x1="490" y1="120" x2="528" y2="120" stroke="#b45309" stroke-width="2" marker-end="url(#rg1)"/>
+    <line x1="150" y1="120" x2="188" y2="120" stroke="#2563eb" stroke-width="2" marker-end="url(#rg1)"/>
+    <line x1="320" y1="120" x2="358" y2="120" stroke="#2563eb" stroke-width="2" marker-end="url(#rg1)"/>
+    <line x1="490" y1="120" x2="528" y2="120" stroke="#2563eb" stroke-width="2" marker-end="url(#rg1)"/>
 
-    <text x="340" y="40" text-anchor="middle" font-size="14" fill="#6b7280">把"参数里没有的现场知识"按需注入上下文（见 llm-context.html）</text>
-    <text x="340" y="205" text-anchor="middle" font-size="13" fill="#15803d">关键：检索到的不是答案，是"答案的素材"——LLM 仍要做整合与生成</text>
+    <text x="340" y="40" text-anchor="middle" font-size="14" fill="#475569">把"参数里没有的现场知识"按需注入上下文（见 llm-context.html）</text>
+    <text x="340" y="205" text-anchor="middle" font-size="13" fill="#b45309">关键：检索到的不是答案，是"答案的素材"——LLM 仍要做整合与生成</text>
   </svg>
 
   <h3>RAG 四步流程的关键设计点</h3>
@@ -144,7 +162,7 @@
     <tr><td>成本</td><td>中等（要建向量库）</td><td>高（GPU 训练）</td><td>低（直接粘文本）</td></tr>
     <tr><td>适合场景</td><td>大量私域文档、需引用源</td><td>风格 / 任务格式深度定制</td><td>单次、文档短</td></tr>
   </table>
-  <div class="note"><b>类比的局限</b>：把 RAG 比作"开卷考试"很形象但会让人忽视 RAG 的两大真实难点——检索质量（搜不到对的资料，模型给再多上下文也没用）和上下文组织（检索结果太长会冲淡关键信息，呼应 llm-context.html 里的 Lost in the Middle 现象）。</div>
+  <div class="note"><b>类比的局限（细化）</b>：把 RAG 比作"开卷考试"很形象但会让人忽视 RAG 的两大真实难点——<b>检索质量</b>（搜不到对的资料，模型给再多上下文也没用）和<b>上下文组织</b>（检索结果太长会冲淡关键信息，呼应 llm-context.html 里的 Lost in the Middle 现象）。</div>
 </section>
 
 <section>
@@ -180,7 +198,9 @@
 </section>
 
 <section>
-  <h2><span class="no">6</span>概念辨析与使用边界</h2>
+  <h2><span class="no">6</span>概念辨析（易混淆 + 使用边界）</h2>
+
+  <h3>易混淆对比表</h3>
   <table>
     <tr><th>易混概念</th><th>区别一句话</th></tr>
     <tr><td><b>RAG vs 微调</b></td><td>RAG 改的是"考试时带的资料"（上下文），微调改的是"脑子里背的内容"（参数）</td></tr>
@@ -188,39 +208,75 @@
     <tr><td><b>RAG vs 长上下文</b></td><td>长上下文是"整本教材摆桌上"（贵、易超出窗口）；RAG 是"先查索引再带几页进考场"（精准、省 token）</td></tr>
     <tr><td><b>RAG vs Agent 工具调用</b></td><td>RAG 是"被设计好的检索→生成流水线"；Agent 则会按需动态决定何时检索、用哪个工具、检索几次</td></tr>
   </table>
-  <h3>常见误解与使用边界</h3>
+
+  <h3>常见误解清单</h3>
   <ul>
-    <li><b>误解："RAG 让 AI 永远正确。"</b> 不是。RAG 只保证"依据给定的资料"，资料本身错就跟着错；模型仍可能在整合时遗漏或扭曲检索结果。</li>
-    <li><b>误解："RAG 一定要用向量数据库。"</b> 检索手段多种多样：关键词、BM25、Elasticsearch、API 调用都行，向量检索只是当前最流行的一种。</li>
+    <li><b>误解</b>："RAG 让 AI 永远正确。" → <b>正确</b>：RAG 只保证"依据给定的资料"，资料本身错就跟着错；模型仍可能在整合时遗漏或扭曲检索结果。</li>
+    <li><b>误解</b>："RAG 一定要用向量数据库。" → <b>正确</b>：检索手段多种多样：关键词、BM25、Elasticsearch、API 调用都行，向量检索只是当前最流行的一种。</li>
+    <li><b>误解</b>："塞满上下文 = RAG。" → <b>正确</b>：真正的 RAG 必须有"针对当前问题检索最相关片段"的过程；整段粘贴只是长上下文，不是 RAG。</li>
   </ul>
-  <div class="warnbox"><b>使用边界</b>：① 检索不到相关资料时，RAG 不如直接让 LLM 自由发挥（瞎答也比"我说不知道"有时更有用）；② 检索结果过多会稀释上下文，反而降低质量，要限制 Top-K；③ 模型需要被训练/提示"只引用给定资料作答，不知道就说不知道"，否则它还是会跑出去胡编；④ 资料源必须新鲜且权威，否则 RAG 拉的是最新的谣言。</div>
+
+  <h3>使用边界（什么时候不该用 RAG）</h3>
+  <div class="warnbox">
+    <ol>
+      <li><b>检索不到相关资料时</b>，RAG 不如直接让 LLM 自由发挥（瞎答有时比"我说不知道"更有用）；</li>
+      <li><b>检索结果过多</b>会稀释上下文，反而降低质量，要限制 Top-K；</li>
+      <li><b>资料源必须新鲜且权威</b>，否则 RAG 拉的是最新的谣言；</li>
+      <li><b>极简单问答</b>用 RAG 反而绕远、增加延迟和成本。</li>
+    </ol>
+  </div>
 </section>
 
 <section>
-  <h2><span class="no">7</span>自测问题</h2>
-  <details><summary>1.（简答）RAG 的四个核心步骤是什么？分别解决什么问题？</summary>
-  <p><b>答：</b>① 提问（拿到问题）；② 检索（在知识库里找相关片段，解决"参数里没有"的问题）；③ 拼上下文（把问题和检索片段拼成 LLM 的 Prompt，解决"现场信息怎么喂进去"的问题）；④ 生成（LLM 基于拼好的上下文作答，解决"现场信息怎么用上"的问题）。</p></details>
-  <details><summary>2.（简答）RAG、微调和长上下文三种"让模型掌握新知识"的方法各有什么取舍？</summary>
-  <p><b>答：</b>RAG：即时更新、成本中等、改的是每次提问的上下文；微调：耗时长、贵、改的是模型参数（长期记忆）；长上下文：实现最简单但受窗口限制、token 成本高、知识"塞"在 prompt 里。三者常组合使用。</p></details>
-  <details><summary>3.（选择）"把 8000 字课程讲义整段贴给 AI 提问"算 RAG 吗？<br>A. 算，是简化的 RAG　B. 不算，是长上下文　C. 算，是检索的特例　D. 都不算</summary>
-  <p><b>答：B。</b>整段粘贴没有"按问题检索相关片段"这一步，只是把所有可用知识一股脑塞进上下文窗口。真正的 RAG 必须有"针对当前问题检索最相关片段"的过程。</p></details>
-  <details><summary>4.（简答）RAG 和搜索引擎的本质区别是什么？</summary>
-  <p><b>答：</b>搜索引擎返回"链接列表"让用户自己点开读；RAG 把检索结果直接喂给 LLM，由 LLM 综合成一段完整答案，并可附带引用——RAG 是"自动读完资料再写摘要"，搜索引擎是"给本书让你自己读"。</p></details>
-  <details><summary>5.（简答）RAG 不是万能的——什么时候用 RAG 比直接问 LLM 更糟？</summary>
-  <p><b>答：</b>① 检索库没有相关资料时（强行 RAG 会让模型无依据作答或答非所问）；② 检索质量差、Top-K 命中无关内容时（反而污染上下文）；③ 文档质量差/有错误时（模型会被错误信息引导，比直接问更糟）；④ 极简单问答（用 RAG 反而绕远、增加延迟和成本）。</p></details>
+  <h2><span class="no">7</span>自测问题（5 题：3 单选 + 2 简答）</h2>
+
+  <details><summary><b>1.（单选）</b>RAG 的四个核心步骤，最准确的顺序是？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>B</b>。提问 → 检索 → 拼上下文 → 生成。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"检索→提问→生成→拼"）把"提问"放在"检索"之后，逻辑反了——没有用户问题，检索什么？C（"生成→检索→拼→生成"）出现两个"生成"，步骤重复且顺序错。D（"拼→检索→生成→提问"）先拼再检索，等于凭空拼上下文，毫无依据。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4「RAG 四步流程的关键设计点」表格。</p>
+  </div></details>
+
+  <details><summary><b>2.（单选）</b>"把 8000 字课程讲义整段贴给 AI 提问"算 RAG 吗？<br>A. 算，是简化的 RAG　B. 不算，是长上下文　C. 算，是检索的特例　D. 都不算</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>B</b>。整段粘贴没有"按问题检索相关片段"这一步，只是把所有可用知识一股脑塞进上下文窗口。真正的 RAG 必须有"针对当前问题检索最相关片段"的过程。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"算，是简化的 RAG"）把"塞满窗口"误以为就是 RAG——RAG 的关键不是"用资料"，而是"按问题找最相关的资料"。C（"算，是检索的特例"）混淆了"检索行为"和"按需检索机制"——整段粘贴没有"按需"动作。D（"都不算"）虽然承认它不是 RAG，但忽略了它属于"长上下文"这一具体技术类别。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 6 常见误解清单第 3 条 + 板块 6 易混淆对比表"RAG vs 长上下文"行。</p>
+  </div></details>
+
+  <details><summary><b>3.（单选）</b>RAG 的答案能附引用编号（如 [1][2]）的根本原因是？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span><b>C</b>。答案中的事实都来自检索到的片段，因此每条事实都能反查到原始资料来源。</p>
+    <p><span class="lbl feedback">答错反馈：</span>A（"AI 主动加的"）只对了一半——AI 确实"主动"加，但前提是它"有据可加"。B（"检索结果自带编号"）是工程实现细节，与"为什么能加"的根因不同。D（"用户要求"）混淆了机制与触发——用户要求是触发条件，但根本机制是事实可追溯。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 3「关键特征」第 3 条（可追溯）+ 板块 5 时序图中"答案+引用[1][2]"结尾。</p>
+  </div></details>
+
+  <details><summary><b>4.（简答）</b>RAG、微调和长上下文三种"让模型掌握新知识"的方法各有什么取舍？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span>RAG：即时更新、成本中等、改的是每次提问的上下文；微调：耗时长、贵、改的是模型参数（长期记忆）；长上下文：实现最简单但受窗口限制、token 成本高、知识"塞"在 prompt 里。三者常组合使用。</p>
+    <p><span class="lbl feedback">常见漏答：</span>① 只罗列方法没说取舍——题目要的是权衡分析；② 把 RAG 和"塞上下文"混为一谈——前者有检索步骤，后者没有。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 4「与三个相近概念的关系」表格。</p>
+  </div></details>
+
+  <details><summary><b>5.（简答）</b>RAG 不是万能的——什么时候用 RAG 比直接问 LLM 更糟？</summary>
+  <div class="ans-block">
+    <p><span class="lbl">正确答案：</span>① 检索库没有相关资料时（强行 RAG 会让模型无依据作答或答非所问）；② 检索质量差、Top-K 命中无关内容时（反而污染上下文）；③ 文档质量差 / 有错误时（模型会被错误信息引导，比直接问更糟）；④ 极简单问答（用 RAG 反而绕远、增加延迟和成本）。</p>
+    <p><span class="lbl feedback">常见漏答：</span>① 只回答"资料不好"不说具体场景——题目要的是"何时"；② 漏掉"极简单问答"这条——这是容易被忽视的成本边界。</p>
+    <p><span class="lbl ref">回到正文：</span>板块 6「使用边界」4 条。</p>
+  </div></details>
 </section>
 
 <section>
-  <h2><span class="no">8</span>参考来源</h2>
+  <h2><span class="no">8</span>参考来源（仅官方）</h2>
   <div class="src"><b>① Lewis et al.《Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks》（arXiv:2005.11401，RAG 原始论文）</b>
     <a href="https://arxiv.org/abs/2005.11401">https://arxiv.org/abs/2005.11401</a>
-    <span class="meta">访问日期：2026-09-04 · 支撑内容：RAG 的原始定义、四步流程的学术原型（第 3、4 板块）</span></div>
-  <div class="src"><b>② IBM Technology《What is retrieval-augmented generation (RAG)?》</b>
-    <a href="https://www.ibm.com/think/topics/retrieval-augmented-generation">https://www.ibm.com/think/topics/retrieval-augmented-generation</a>
-    <span class="meta">访问日期：2026-09-04 · 支撑内容：RAG 与传统搜索、与微调的对比，应用场景分类（第 4、5、6 板块）</span></div>
-  <div class="src"><b>③ AWS《Retrieval-Augmented Generation options on AWS》</b>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：RAG 的原始定义、四步流程的学术原型（板块 3、4）</span></div>
+  <div class="src"><b>② AWS 官方文档《Retrieval-Augmented Generation options on AWS》（docs.aws.amazon.com 官方文档库）</b>
     <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/rag-architecture.html">https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/rag-architecture.html</a>
-    <span class="meta">访问日期：2026-09-04 · 支撑内容：RAG 系统级架构（检索层/向量库/重排/生成层）的工业实践（第 4、6 板块）</span></div>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：RAG 系统级架构（检索层/向量库/重排/生成层）的工业实践（板块 4、6）</span></div>
+  <div class="src"><b>③ NVIDIA 官方研究《Contextual Retrieval》（research.nvidia.com 官方研究页面）</b>
+    <a href="https://research.nvidia.com/labs/llm/projects/contextual-rag/">https://research.nvidia.com/labs/llm/projects/contextual-rag/</a>
+    <span class="meta">访问日期：2026-09-10 · 支撑内容：上下文感知 RAG 的最新工业研究，提升检索质量的具体方法（板块 4、6）</span></div>
 </section>
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
