@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>概念学习资料：Agent（智能体）</title>
+<meta name="description" content="本文件含 Mermaid 可视化图表（CDN 引入），需联网渲染；离线时显示源代码而非空白">
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
@@ -51,6 +52,11 @@
   .tag{display:inline-block;background:var(--brand-bg);color:var(--brand);border-radius:6px;
     padding:1px 8px;font-size:13px;margin:0 4px 4px 0}
   svg{max-width:100%;height:auto;display:block;margin:16px auto}
+  .figure{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:18px 0}
+  .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
+  .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
+  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -136,6 +142,29 @@
 <section>
   <h2><span class="no">5</span>应用场景</h2>
   <p><b>场景：用 AI 助手（如 WorkBuddy）完成课程作业"调研一个大数据工具并写成报告"。</b></p>
+
+  <div class="figure">
+    <div class="cap"><span>图：Agent 调研并写报告的完整时序</span><span class="tag">Mermaid · sequenceDiagram</span></div>
+<pre class="mermaid">sequenceDiagram
+    participant U as 用户
+    participant A as Agent
+    participant L as LLM
+    participant S as 搜索工具
+    participant F as 文件系统
+    U->>A: 调研XX并写报告
+    A->>L: 拆任务→查→对比→写
+    loop 思考循环
+        L-->>A: 下一步行动
+        A->>S: 搜索关键词
+        S-->>A: 返回若干结果
+        A->>F: 读取历史素材
+        F-->>A: 文件内容
+        L-->>A: 整合并写报告
+    end
+    A->>F: 写入 report.docx
+    A-->>U: 交付报告+引用</pre>
+    <div class="mermaid-legend"><b>图读法</b>：横轴是角色（U/A/L/S/F），纵轴是时间；每个 <code>->></code> 是一次调用、<code>-->></code> 是一次返回。从上往下读，就能看清 Agent 是怎么把"调研 + 写报告"这种模糊目标，一步步拆成可执行的工具调用，并把每一步的反馈都写回上下文的——这就是 Agent Loop 的时序视角。</div>
+  </div>
   <table>
     <tr><th>循环</th><th>Agent 在做什么</th><th>对应机制</th></tr>
     <tr><td>第 1 轮</td><td>把作业目标写入上下文，拆解出计划：先查资料 → 再对比 → 最后成文</td><td>LLM 规划</td></tr>
@@ -194,5 +223,8 @@
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
 </div>
+<!-- Mermaid 可视化（一次性 CDN 引入；离线时图表块显示源代码） -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>if(typeof mermaid!=='undefined'){mermaid.initialize({startOnLoad:true,theme:'neutral',securityLevel:'loose'});}</script>
 </body>
 </html>

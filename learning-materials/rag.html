@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>概念学习资料：RAG（检索增强生成）</title>
+<meta name="description" content="本文件含 Mermaid 可视化图表（CDN 引入），需联网渲染；离线时显示源代码而非空白">
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
@@ -51,6 +52,11 @@
   svg{max-width:100%;height:auto;display:block;margin:16px auto}
   code{background:#eff6ff;color:#1d4ed8;border-radius:4px;padding:1px 6px;font-size:14px;
     font-family:Consolas,"Courier New",monospace}
+  .figure{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:18px 0}
+  .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
+  .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
+  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -144,6 +150,24 @@
 <section>
   <h2><span class="no">5</span>应用场景</h2>
   <p><b>场景：用 AI 助手帮你做"课程问答机器人"——同学问课程相关问题，机器人只引用课件、教材、老师讲义作答。</b></p>
+
+  <div class="figure">
+    <div class="cap"><span>图：课程问答机器人的 RAG 流程时序</span><span class="tag">Mermaid · sequenceDiagram</span></div>
+<pre class="mermaid">sequenceDiagram
+    participant U as 同学
+    participant Bot as 课程机器人
+    participant E as Embedding
+    participant V as 向量库
+    participant L as LLM
+    U->>Bot: 第二章SVM对偶问题?
+    Bot->>E: 问题→向量
+    E->>V: 相似度检索
+    V-->>Bot: Top-3 课件片段
+    Bot->>L: 提示=角色+片段+问题
+    L-->>Bot: 基于资料的解答
+    Bot-->>U: 答案+引用[1][2]</pre>
+    <div class="mermaid-legend"><b>图读法</b>：注意"问题→向量"这一步——RAG 的关键不是搜索关键词，而是把问题和文档都转成同一空间里的向量，靠相似度找出"语义相关"的片段（即便关键词不重合也能搜到）。最后答案里带 <code>[1][2]</code> 引用编号，是因为答案里的事实都来自检索到的片段——这是 RAG 比"直接问大模型"更可信的核心机制：<b>可追溯</b>。</div>
+  </div>
   <ol>
     <li>课程资料预处理：把所有 PDF 课件、教材章节、老师讲义切成小段，编码为向量，存入向量数据库（这是 RAG 的关键资产）</li>
     <li>同学提问："第二章里支持向量机的对偶问题怎么推导？"</li>
@@ -201,5 +225,8 @@
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
 </div>
+<!-- Mermaid 可视化（一次性 CDN 引入；离线时图表块显示源代码） -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>if(typeof mermaid!=='undefined'){mermaid.initialize({startOnLoad:true,theme:'neutral',securityLevel:'loose'});}</script>
 </body>
 </html>

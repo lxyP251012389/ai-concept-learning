@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>概念学习资料：大模型的上下文（Context）</title>
+<meta name="description" content="本文件含 Mermaid 可视化图表（CDN 引入），需联网渲染；离线时显示源代码而非空白">
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
@@ -49,6 +50,11 @@
   .src a{color:var(--brand);word-break:break-all}
   footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
   svg{max-width:100%;height:auto;display:block;margin:16px auto}
+  .figure{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:18px 0}
+  .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
+  .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
+  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -129,6 +135,22 @@
 <section>
   <h2><span class="no">5</span>应用场景</h2>
   <p><b>场景：让 AI 帮你改一份 8000 字的课程报告（真实高频场景）。</b></p>
+
+  <div class="figure">
+    <div class="cap"><span>图：长报告改写时的上下文装配与窗口压力</span><span class="tag">Mermaid · sequenceDiagram</span></div>
+<pre class="mermaid">sequenceDiagram
+    participant U as 用户
+    participant A as Agent
+    participant L as LLM
+    participant C as 上下文窗口
+    U->>A: 把第二部分改学术一点
+    Note over A,C: 报告全文(~12k token)+指令进上下文
+    A->>L: 基于完整上下文推理
+    L-->>A: 改写后内容
+    A-->>U: 返回修改
+    Note over L,C: 若报告>窗口<br/>需 RAG 分段送入<br/>或先摘要再改</pre>
+    <div class="mermaid-legend"><b>图读法</b>：注意 <code>Note over A,C</code> 那段——上下文（不是模型本身）才是这次推理的"工作台"：报告全文 1.2 万 token + 指令 30 token，模型"眼前能看到"的就这么多。如果报告再长一些（比如 5 万字），超过了模型窗口，就得靠 <a href="rag.html" style="color:var(--brand)">RAG 分段送入</a> 或先做摘要，否则模型会"看不到"开头的内容，<b>Lost in the Middle</b> 效应会让它忘掉最早的要求。</div>
+  </div>
   <ol>
     <li>你把报告全文粘贴进对话框，附一句"帮我把第二部分改得更学术一点"——报告全文 + 指令此刻全部进入了<strong>上下文</strong>；</li>
     <li>AI 能精准改写，因为它"眼前"能看到全文（这比它参数里的任何写作知识都关键）；</li>
@@ -185,5 +207,8 @@
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
 </div>
+<!-- Mermaid 可视化（一次性 CDN 引入；离线时图表块显示源代码） -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>if(typeof mermaid!=='undefined'){mermaid.initialize({startOnLoad:true,theme:'neutral',securityLevel:'loose'});}</script>
 </body>
 </html>

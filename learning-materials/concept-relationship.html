@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>概念关系说明：Agent · 上下文 · Skill</title>
+<meta name="description" content="本文件含 Mermaid 可视化图表（CDN 引入），需联网渲染；离线时显示源代码而非空白">
 <style>
   :root{
     --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff;
@@ -47,6 +48,11 @@
   svg{max-width:100%;height:auto;display:block;margin:16px auto}
   code{background:#eff6ff;color:#1d4ed8;border-radius:4px;padding:1px 6px;font-size:14px;
     font-family:Consolas,"Courier New",monospace}
+  .figure{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:18px 0}
+  .figure .cap{color:var(--muted);font-size:13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .figure .cap .tag{background:var(--brand-bg);color:var(--brand);border-radius:6px;padding:1px 8px;font-size:12px}
+  .mermaid{background:#fff;border:1px dashed #cbd5e1;border-radius:8px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#1e293b;overflow-x:auto;white-space:pre;margin:0}
+  .mermaid-legend{background:#f1f5f9;border-left:3px solid var(--brand);padding:10px 14px;border-radius:0 8px 8px 0;margin:6px 0 18px;font-size:14.5px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -157,6 +163,31 @@
 
 <section>
   <h2><span class="no">6</span>一个闭环实例：本次作业</h2>
+
+  <div class="figure">
+    <div class="cap"><span>图：三概念咬合的完整 Agent 运行（本次作业实战）</span><span class="tag">Mermaid · sequenceDiagram</span></div>
+<pre class="mermaid">sequenceDiagram
+    participant U as 用户
+    participant A as Agent
+    participant Sk as Skill 库
+    participant L as LLM
+    participant T as 工具
+    participant C as 上下文
+    U->>A: 帮我完成 XX 任务
+    A->>Sk: 按 description 匹配
+    Sk-->>A: 加载 SKILL.md 进上下文
+    A->>C: 组装=系统+Skill+历史+任务
+    loop Agent Loop
+        A->>L: 基于上下文推理下一步
+        L-->>A: 调用某个工具/回答
+        A->>T: 调用工具
+        T-->>A: 返回结果
+        A->>C: 结果写回上下文
+    end
+    A-->>U: 交付
+    Note over Sk,C: 执行发现问题→修订 Skill→Git 提交→Skill 越用越好</pre>
+    <div class="mermaid-legend"><b>图读法</b>：这是上面那张"关系图"的时序版本——把三个概念咬合的过程按时间展开。<b>Skill</b> 出现在最左侧（被加载）；<b>上下文</b> 出现在装配和回写两个动作里（不是模型本身）；<b>Agent</b> 是中间那位持续循环的"调度员"。读这张图的关键是分清<b>持久层</b>（Skill 文件在硬盘、模型参数在 GPU）和<b>瞬时层</b>（上下文只在这一次会话里有效）——两者的边界决定了"经验如何沉淀、知识如何生效"。</div>
+  </div>
   <ol>
     <li><b>沉淀（Skill → 文件）</b>：把"概念学习八板块法"写成 <code>concept-learner/SKILL.md</code>，提交进 Git；</li>
     <li><b>触发与注入（Skill → 上下文）</b>：说"用 concept-learner 学习 Agent"，SKILL.md 的流程要求进入上下文；</li>
@@ -181,5 +212,8 @@
 
 <footer>ai-concept-learning · 由 concept-learner Skill 生成 · 学习后请完成自测并核对参考来源</footer>
 </div>
+<!-- Mermaid 可视化（一次性 CDN 引入；离线时图表块显示源代码） -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>if(typeof mermaid!=='undefined'){mermaid.initialize({startOnLoad:true,theme:'neutral',securityLevel:'loose'});}</script>
 </body>
 </html>
